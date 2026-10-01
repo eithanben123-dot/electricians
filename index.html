@@ -1,273 +1,198 @@
-<!DOCTYPE html>
-<html lang="fr">
+<!doctype html>
+<html lang="he" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- ↓ TITLE + DESCRIPTION : remplace par ton business (Claude le fera à l'étape 3) -->
-  <title>[NOM DU SITE] — [promesse en une ligne]</title>
-  <meta name="description" content="[Une phrase qui décrit ton offre / ton bien / ton produit.]" />
-
-  <!--
-    POLICES : ce starter utilise des polices système neutres (voir --serif / --sans
-    dans style.css). Pour une vraie identité, ajoute un <link> Google Fonts ici
-    PUIS mets les noms dans :root. Exemple :
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Work+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
-  -->
-
-  <!-- ↓ ?v=1 = cache-bust MANUEL de ce fichier. Bump-le (?v=2, ?v=3…) chaque fois
-       que tu modifies style.css. C'est SÉPARÉ de CACHE_BUST dans script.js, qui ne
-       gère QUE les frames du fly-through, pas les fichiers .css / .js. -->
-  <link rel="stylesheet" href="style.css?v=1" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>זרם · חשמלאי מוסמך</title>
+  <meta name="description" content="זרם — חשמלאי מוסמך. לוחות חשמל, הגדלת חיבור, תכנון תאורה, עמדות טעינה ובית חכם. עבודה מדויקת, נקייה ובטוחה." />
+  <meta name="theme-color" content="#060607" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@300;400;500;700&family=Heebo:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="vendor/lenis/lenis.css" />
+  <link rel="stylesheet" href="style.css?v=2" />
+  <script type="importmap">
+    { "imports": { "three": "./vendor/three/three.module.js", "three/addons/": "./vendor/three/addons/" } }
+  </script>
 </head>
-<body>
+<body class="is-loading">
 
-  <div class="scroll-progress" aria-hidden="true"></div>
+  <!-- ===== loader ===== -->
+  <div class="loader" aria-hidden="true">
+    <div class="loader__inner">
+      <span class="loader__label">מחבר את המעגל</span>
+      <span class="loader__volt"><b data-volt>000</b><i>V</i></span>
+      <span class="loader__bar"><span></span></span>
+    </div>
+  </div>
 
-  <!-- ============ NAV ============
-       Remplace [MARQUE] et les libellés de liens. Les href #ancres pointent
-       vers les id="" des sections plus bas — garde-les cohérents. -->
-  <header class="nav" id="nav">
-    <a href="#hero" class="nav__brand">[MARQUE]</a>
-    <nav class="nav__links" aria-label="Navigation principale">
-      <a href="#section-1">[Lien 1]</a>
-      <a href="#features">[Lien 2]</a>
-      <a href="#section-2">[Lien 3]</a>
-      <a href="#contact">Contact</a>
+  <canvas id="gl" aria-hidden="true"></canvas>
+  <div class="fx-vignette" aria-hidden="true"></div>
+  <div class="fx-grain" aria-hidden="true"></div>
+  <div class="cursor" aria-hidden="true"><span class="cursor__dot"></span><span class="cursor__ring"><em></em></span></div>
+
+  <!-- ===== header ===== -->
+  <header class="top">
+    <a class="brand" href="#hero" data-nav>
+      <span class="brand__mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M13.2 2 5 13.4h5.6L9.4 22 19 9.8h-5.9z" /></svg>
+      </span>
+      <span class="brand__name">זרם</span>
+      <span class="brand__sub">ZEREM · ELECTRIC</span>
+    </a>
+    <nav class="top__nav" aria-label="ניווט ראשי">
+      <a href="#panel" data-nav>שירותים</a>
+      <a href="#safety" data-nav>בטיחות</a>
+      <a href="#process" data-nav>תהליך</a>
+      <a href="#contact" data-nav>צור קשר</a>
     </nav>
-    <a href="#contact" class="nav__cta">[Action principale]</a>
+    <a class="top__cta" href="tel:+972525550123" data-cursor="חייגו">
+      <span class="top__cta-dot" aria-hidden="true"></span>
+      <span class="ltr">052-555-0123</span>
+    </a>
   </header>
 
+  <!-- ===== side rail: chapter + live readout ===== -->
+  <aside class="rail" aria-hidden="true">
+    <div class="rail__line"><span class="rail__fill"></span></div>
+    <div class="rail__chapter"><b data-ch-num>01</b><span>/ 07</span></div>
+    <div class="rail__name" data-ch-name>הדלקה</div>
+    <div class="rail__read ltr"><span data-read-v>230.0</span> V · <span data-read-a>00.0</span> A</div>
+  </aside>
+
   <main>
-
-    <!-- ============ HERO — fly-through cinématique (scroll-scrub) ============
-         C'EST LE CŒUR DU SITE.
-         1. Exporte les frames de TON vol (Higgsfield → vidéo → frames JPEG).
-         2. Pose-les dans  assets/frames/  nommées frame-001.jpg, frame-002.jpg ...
-         3. Mets le NOMBRE exact de frames dans data-frames ci-dessous.
-         4. Recale la hauteur du hero dans style.css (.scrub) sur ~N × 4.6vh.
-         5. À chaque remplacement de frames, incrémente CACHE_BUST dans script.js.
-         Les "beats" (légendes) ci-dessous apparaissent en fondu pendant le vol :
-         data-in / data-out = position dans le scroll (0 = début, 1 = fin).
-
-         ⚠️ ÉTAT PAR DÉFAUT (avant TES frames) : le starter ship avec UNE frame
-         de démo (frame-001.jpg, un dégradé neutre) et data-frames="1". Au premier
-         serve, le hero affiche donc ce dégradé fixe sur une hauteur courte (160vh).
-         C'EST NORMAL — il s'animera dès que tu auras posé tes vraies frames et
-         mis data-frames à jour. Le starter n'est pas cassé. -->
-    <section class="scrub" id="hero" data-frames="1" aria-label="[Décris ton fly-through pour l'accessibilité]">
-      <div class="scrub__stage">
-        <canvas class="scrub__canvas" aria-hidden="true"></canvas>
-        <div class="scrub__scrim" aria-hidden="true"></div>
-
-        <!-- Loader (barre de préchargement des frames) -->
-        <div class="loader" id="loader" role="status" aria-live="polite">
-          <span class="loader__brand">[MARQUE]</span>
-          <span class="loader__track" aria-hidden="true"><span class="loader__bar" id="loaderBar"></span></span>
-          <span class="loader__pct" id="loaderPct">0%</span>
+    <!-- 01 · HERO -->
+    <section class="ch hero" id="hero" data-scene="hero" data-name="הדלקה" data-amp="0.4">
+      <div class="hero__inner">
+        <p class="eyebrow reveal"><span class="ltr">01</span> חשמלאי מוסמך · רישיון בתוקף</p>
+        <h1 class="hero__title" data-split>
+          <span class="line">זרם נקי.</span>
+          <span class="line line--accent">עבודה מדויקת.</span>
+        </h1>
+        <p class="hero__lede reveal">תכנון, התקנה ותחזוקה של מערכות חשמל לבתים פרטיים, דירות יוקרה ועסקים — ברמת גימור של סטודיו, עם אפס פשרות על בטיחות.</p>
+        <div class="hero__actions reveal">
+          <a class="btn btn--solid" href="#contact" data-nav data-cursor="יאללה">תיאום ביקור</a>
+          <a class="btn btn--ghost" href="#panel" data-nav>לשירותים</a>
         </div>
+      </div>
+      <div class="hero__meta reveal">
+        <span class="ltr">230V · 50Hz</span>
+        <span>מרכז · שרון · שפלה</span>
+        <span>מוקד תקלות <span class="ltr">24/7</span></span>
+      </div>
+      <div class="hint" aria-hidden="true"><span class="hint__line"></span><span>גללו כדי להיכנס</span></div>
+    </section>
 
-        <!-- BEAT 1 — visible au tout début du vol -->
-        <div class="scrub__beat" data-in="-0.06" data-out="0.22">
-          <p class="scrub__eyebrow">[Sur-titre court]</p>
-          <h1 class="scrub__title">[Titre principal <em>accentué</em>]</h1>
-          <p class="scrub__tagline">[Une ligne d'accroche poétique ou directe.]</p>
-        </div>
+    <!-- 02 · MANIFESTO (pinned, word-by-word) -->
+    <section class="ch manifesto" id="manifesto" data-scene="manifesto" data-name="פילוסופיה" data-amp="0.6">
+      <div class="pin">
+        <p class="eyebrow"><span class="ltr">02</span> הגישה</p>
+        <p class="manifesto__text" data-words>חשמל טוב הוא חשמל שלא שמים לב אליו. בלי הבהובים, בלי קפיצות של הפחת, בלי הפתעות בתוך הקיר. רק מערכת שתוכננה נכון, הותקנה בשקט — <em>ועובדת. כל יום.</em></p>
+      </div>
+    </section>
 
-        <!-- BEAT 2 — milieu du vol -->
-        <div class="scrub__beat" data-in="0.30" data-out="0.48">
-          <p class="scrub__eyebrow">[Sur-titre]</p>
-          <h2 class="scrub__beat-title">[Idée 2<br /><em>sur deux lignes.</em>]</h2>
-          <p class="scrub__beat-copy">[Une ou deux phrases qui accompagnent ce moment du vol.]</p>
-        </div>
+    <!-- 03 · CURRENT / numbers along the cord -->
+    <section class="ch current" id="current" data-scene="current" data-name="ניסיון" data-amp="9.8">
+      <div class="current__head">
+        <p class="eyebrow reveal"><span class="ltr">03</span> זרם רציף</p>
+        <h2 class="h2" data-split><span class="line">שבע־עשרה שנה</span><span class="line line--accent">בלי קצר אחד.</span></h2>
+      </div>
+      <ol class="figures">
+        <li class="fig reveal"><span class="fig__n ltr" data-count="17">0</span><span class="fig__t">שנות עבודה בשטח — מדירות ועד מבני משרדים.</span></li>
+        <li class="fig fig--b reveal"><span class="fig__n ltr" data-count="2400" data-suffix="+">0</span><span class="fig__t">פרויקטים שנמסרו, מתועדים ועם תעודת בודק.</span></li>
+        <li class="fig reveal"><span class="fig__n ltr">3×80<small>A</small></span><span class="fig__t">היקף רישיון חשמלאי מוסמך — עד חיבור תלת־פאזי מלא.</span></li>
+        <li class="fig fig--b reveal"><span class="fig__n ltr" data-count="45" data-suffix="′">0</span><span class="fig__t">זמן הגעה ממוצע לקריאת חירום באזור המרכז.</span></li>
+      </ol>
+    </section>
 
-        <!-- BEAT 3 — fin du vol, avec CTA.
-             data-in="0.82" = même grille narrative que le skill cinematic-site-design
-             (arc 82-100 % du scroll pour la fin du vol). La fenêtre 0.48→0.82 sans
-             légende est une RESPIRATION volontaire (la vidéo seule). 🔴 Ces valeurs
-             sont un POINT DE DÉPART : recale-les à l'œil à l'étape 5 du GUIDE une
-             fois tes vraies frames posées (scrolle, repère où la caméra arrive sur
-             chaque temps fort, ajuste). Si tu veux un beat intermédiaire dans la
-             respiration, demande-le à Claude Code (il ajoute un .scrub__beat). -->
-        <div class="scrub__beat" data-in="0.82" data-out="1.01">
-          <p class="scrub__eyebrow">[Sur-titre]</p>
-          <h2 class="scrub__beat-title">[Idée finale,<br /><em>l'arrivée.</em>]</h2>
-          <p class="scrub__beat-copy">[Phrase de clôture du vol.]</p>
-          <a href="#contact" class="btn btn--light">[Bouton d'action]</a>
-        </div>
-
-        <!-- Indice de scroll -->
-        <div class="scrub__cue" id="scrubCue" aria-hidden="true">
-          <span>[Faites défiler]</span>
-          <span class="scrub__cue-line"></span>
+    <!-- 04 · PANEL / services = circuits (pinned) -->
+    <section class="ch panel" id="panel" data-scene="panel" data-name="הלוח" data-amp="16.0">
+      <div class="pin panel__pin">
+        <div class="panel__col">
+          <p class="eyebrow"><span class="ltr">04</span> הלוח · שירותים</p>
+          <h2 class="h2 h2--sm" data-split><span class="line">כל שירות</span><span class="line line--accent">הוא מעגל.</span></h2>
+          <ol class="circuits" data-circuits>
+            <li data-i="0"><button type="button"><span class="c__n ltr">01</span><span class="c__t">לוחות חשמל</span><span class="c__r ltr">C25</span></button><p>החלפה, שדרוג והרחבה של לוחות ביתיים ועסקיים — כולל ממסרי פחת, מגנים ושילוט מלא.</p></li>
+            <li data-i="1"><button type="button"><span class="c__n ltr">02</span><span class="c__t">הגדלת חיבור</span><span class="c__r ltr">C32</span></button><p>הגדלת חיבור מול חברת החשמל עד <span class="ltr">3×80A</span>, כולל תכנון עומסים ותיאום מלא.</p></li>
+            <li data-i="2"><button type="button"><span class="c__n ltr">03</span><span class="c__t">תכנון ועיצוב תאורה</span><span class="c__r ltr">C10</span></button><p>תאורה אדריכלית, פסי לד, ספוטים שקועים ותרחישי אור — יחד עם המעצב או האדריכל.</p></li>
+            <li data-i="3"><button type="button"><span class="c__n ltr">04</span><span class="c__t">איתור תקלות</span><span class="c__r ltr">C16</span></button><p>אבחון קצרים, נפילות פחת חוזרות ותקלות נסתרות במכשור מדידה מקצועי. מוקד <span class="ltr">24/7</span>.</p></li>
+            <li data-i="4"><button type="button"><span class="c__n ltr">05</span><span class="c__t">עמדות טעינה לרכב</span><span class="c__r ltr">C32</span></button><p>התקנת עמדות טעינה ביתיות ובבניינים משותפים, כולל הזנה ייעודית והגנות.</p></li>
+            <li data-i="5"><button type="button"><span class="c__n ltr">06</span><span class="c__t">בית חכם</span><span class="c__r ltr">C10</span></button><p>מפסקים חכמים, תריסים, תרחישים ושליטה מהטלפון — חיווט שמתוכנן לעתיד.</p></li>
+            <li data-i="6"><button type="button"><span class="c__n ltr">07</span><span class="c__t">הארקות והגנות</span><span class="c__r ltr">C16</span></button><p>בדיקת לולאת תקלה, פס השוואת פוטנציאלים והגנה מפני מתחי יתר.</p></li>
+            <li data-i="7"><button type="button"><span class="c__n ltr">08</span><span class="c__t">דירות חדשות ושיפוצים</span><span class="c__r ltr">C20</span></button><p>חיווט מלא מאפס: נקודות, תקשורת, מיזוג ומסירה מסודרת לבודק מוסמך.</p></li>
+          </ol>
+          <p class="panel__tip">לחצו על מפסק בלוח — או על שירות ברשימה.</p>
         </div>
       </div>
     </section>
 
-    <!-- ============ STATS — chiffres-clés ============
-         4 chiffres qui comptent pour ton business. Les nombres s'animent
-         (compteur) à l'apparition. Une valeur non-numérique (ex. une lettre)
-         reste statique. -->
-    <section class="stats" aria-label="[Tes chiffres-clés]">
-      <div class="stats__inner">
-        <div class="stat reveal" data-reveal>
-          <span class="stat__num">[00]<span class="stat__unit"> [unité]</span></span>
-          <span class="stat__label">[Libellé du chiffre]</span>
-        </div>
-        <div class="stat reveal" data-reveal>
-          <span class="stat__num">[00]<span class="stat__unit"> [unité]</span></span>
-          <span class="stat__label">[Libellé du chiffre]</span>
-        </div>
-        <div class="stat reveal" data-reveal>
-          <span class="stat__num">[00]</span>
-          <span class="stat__label">[Libellé du chiffre]</span>
-        </div>
-        <div class="stat reveal" data-reveal>
-          <span class="stat__num">[00]</span>
-          <span class="stat__label">[Libellé du chiffre]</span>
+    <!-- 05 · SAFETY / the switch (pinned, interactive) -->
+    <section class="ch safety" id="safety" data-scene="safety" data-name="בטיחות" data-amp="2.4">
+      <div class="pin safety__pin">
+        <div class="safety__col">
+          <p class="eyebrow"><span class="ltr">05</span> בטיחות</p>
+          <h2 class="h2" data-split><span class="line">בטיחות היא לא תוספת.</span><span class="line line--accent">היא היסוד.</span></h2>
+          <p class="safety__lede">כל עבודה מבוצעת לפי חוק החשמל ותקנותיו, נבדקת במכשור מכויל ונמסרת עם תיעוד מלא ואחריות בכתב.</p>
+          <ul class="safety__list">
+            <li>רישיון חשמלאי מוסמך בתוקף</li>
+            <li>ביטוח צד ג׳ ואחריות מקצועית</li>
+            <li>אחריות בכתב על כל עבודה</li>
+            <li>תעודת בדיקה ותיעוד מסירה</li>
+          </ul>
+          <button class="switch-btn" type="button" aria-pressed="false" data-power data-cursor="הדליקו">
+            <span class="switch-btn__track"><span class="switch-btn__knob"></span></span>
+            <span class="switch-btn__label" data-power-label>הדליקו את האור</span>
+          </button>
         </div>
       </div>
     </section>
 
-    <!-- ============ SECTION ÉDITORIALE 1 — image à droite, texte à gauche ============
-         Bloc storytelling. Mets une vraie image dans assets/img/ ou garde le
-         placeholder. La classe --reverse inverse l'ordre image/texte. -->
-    <section class="editorial editorial--reverse" id="section-1">
-      <div class="editorial__inner">
-        <div class="editorial__media reveal" data-reveal>
-          <figure class="frame">
-            <!-- 🔴 Bloc éditorial : l'<img> ci-dessous pointe par défaut sur le placeholder neutre
-                 (placeholder-1.jpg) pour que la section s'affiche DÈS le 1er serve (pas un trou noir).
-                 À l'étape 4 bis du GUIDE, tu ne fais PAS ce remplacement à la main : demande à Claude Code
-                 « branche mon image X dans la section présentation » — il change le src vers ton vrai
-                 fichier (généré sur Higgsfield, posé dans assets/img/) en gardant width/height. -->
-            <img src="assets/img/placeholder-1.jpg" alt="[Décris l'image]" width="1600" height="1000" loading="lazy" decoding="async" />
-          </figure>
+    <!-- 06 · PROCESS (pinned, horizontal) -->
+    <section class="ch process" id="process" data-scene="process" data-name="תהליך" data-amp="6.3">
+      <div class="pin process__pin">
+        <div class="process__head">
+          <p class="eyebrow"><span class="ltr">06</span> איך זה עובד</p>
+          <h2 class="h2 h2--sm" data-split><span class="line">ארבעה שלבים.</span><span class="line line--accent">אפס הפתעות.</span></h2>
         </div>
-        <div class="editorial__text">
-          <p class="eyebrow reveal" data-reveal>[Sur-titre]</p>
-          <h2 class="editorial__title reveal" data-reveal>[Titre du bloc<br /><em>sur deux lignes.</em>]</h2>
-          <p class="lede reveal" data-reveal>
-            [Paragraphe principal : explique le bénéfice, raconte. 2-3 phrases.]
-          </p>
-          <p class="meta reveal" data-reveal>
-            [Ligne de détails secondaires, séparés par des points médians · comme · ceci.]
-          </p>
+        <div class="process__track" data-track>
+          <article class="step"><span class="step__n ltr">01</span><h3>שיחה</h3><p>מספרים מה צריך. אני שואל את השאלות הנכונות — ולפעמים חוסך לכם ביקור מיותר.</p></article>
+          <article class="step"><span class="step__n ltr">02</span><h3>ביקור ואבחון</h3><p>בדיקה בשטח עם מכשור מדידה: עומסים, הארקה, מצב הלוח והחיווט הקיים.</p></article>
+          <article class="step"><span class="step__n ltr">03</span><h3>הצעה סגורה</h3><p>מחיר כתוב ומפורט, לוח זמנים ברור. מה שסיכמנו — זה מה שמשלמים.</p></article>
+          <article class="step"><span class="step__n ltr">04</span><h3>ביצוע ומסירה</h3><p>עבודה נקייה, בדיקה סופית, תיעוד מלא ואחריות בכתב. משאירים אחרינו רק אור.</p></article>
         </div>
+        <div class="process__bar" aria-hidden="true"><span data-track-fill></span></div>
       </div>
     </section>
 
-    <!-- ============ FEATURES — liste de prestations / fonctionnalités ============
-         Titre sticky à gauche, liste numérotée à droite. Ajoute / retire
-         des <li> selon ton offre. -->
-    <section class="amenities" id="features">
-      <div class="amenities__inner">
-        <header class="amenities__head">
-          <p class="eyebrow reveal" data-reveal>[Sur-titre]</p>
-          <h2 class="amenities__title reveal" data-reveal>[Titre de la liste<br /><em>accentué.</em>]</h2>
-        </header>
-        <ol class="amenities__list">
-          <li class="amenity reveal" data-reveal>
-            <span class="amenity__index">01</span>
-            <span class="amenity__text">[Première prestation / point fort]</span>
-          </li>
-          <li class="amenity reveal" data-reveal>
-            <span class="amenity__index">02</span>
-            <span class="amenity__text">[Deuxième point]</span>
-          </li>
-          <li class="amenity reveal" data-reveal>
-            <span class="amenity__index">03</span>
-            <span class="amenity__text">[Troisième point]</span>
-          </li>
-          <li class="amenity reveal" data-reveal>
-            <span class="amenity__index">04</span>
-            <span class="amenity__text">[Quatrième point]</span>
-          </li>
-        </ol>
-      </div>
-    </section>
-
-    <!-- ============ FULL-BLEED — image plein écran avec texte par-dessus ============
-         Image de fond + dégradé (scrim) + contenu. Léger parallaxe au scroll. -->
-    <section class="bleed bleed--tall" id="section-2" aria-label="[Décris la section]">
-      <img class="bleed__img" src="assets/img/placeholder-2.jpg" alt="[Décris l'image]" width="2560" height="1440" loading="lazy" decoding="async" />
-      <div class="bleed__scrim" aria-hidden="true"></div>
-      <div class="bleed__content bleed__content--low">
-        <p class="eyebrow eyebrow--light reveal" data-reveal>[Sur-titre]</p>
-        <h2 class="bleed__title reveal" data-reveal>[Titre<br /><em>en deux temps.</em>]</h2>
-        <p class="bleed__copy reveal" data-reveal>
-          [Paragraphe posé sur l'image. Garde-le court et lisible.]
-        </p>
-        <ul class="bleed__specs reveal" data-reveal>
-          <li><span class="bleed__spec-k">[Label]</span><span class="bleed__spec-v">[Valeur]</span></li>
-          <li><span class="bleed__spec-k">[Label]</span><span class="bleed__spec-v">[Valeur]</span></li>
-          <li><span class="bleed__spec-k">[Label]</span><span class="bleed__spec-v">[Valeur]</span></li>
-        </ul>
-      </div>
-    </section>
-
-    <!-- ============ MANIFESTE — déclaration centrée ============
-         Le moment "pourquoi". Court, marquant. -->
-    <section class="manifesto" id="manifeste">
-      <div class="manifesto__inner">
-        <p class="eyebrow eyebrow--center reveal" data-reveal>— [Sur-titre]</p>
-        <h2 class="manifesto__title reveal" data-reveal>
-          [Ta phrase manifeste,<br /><em>la promesse de fond.</em>]
-        </h2>
-        <p class="manifesto__copy reveal" data-reveal>
-          [2-3 phrases qui donnent le sens, la vision, l'émotion derrière l'offre.]
-        </p>
-      </div>
-    </section>
-
-    <!-- ============ CONTACT ============
-         Texte à gauche, coordonnées cliquables à droite. Mets tes vrais liens
-         mailto: / tel: . -->
-    <section class="contact" id="contact">
+    <!-- 07 · CONTACT -->
+    <section class="ch contact" id="contact" data-scene="contact" data-name="חיבור" data-amp="0.4">
       <div class="contact__inner">
-        <div class="contact__text">
-          <p class="eyebrow eyebrow--light reveal" data-reveal>[Sur-titre]</p>
-          <h2 class="contact__title reveal" data-reveal>
-            [Invitation à passer à l'action,<br />sur deux lignes.]
-          </h2>
-          <p class="contact__copy reveal" data-reveal>
-            [Phrase de réassurance : comment ça se passe, délai de réponse, etc.]
-          </p>
-        </div>
-        <div class="contact__details reveal" data-reveal>
-          <a class="contact__row" href="mailto:[email@exemple.fr]">
-            <span class="contact__label">Email</span>
-            <span class="contact__value">[email@exemple.fr]</span>
-          </a>
-          <a class="contact__row" href="tel:[+33000000000]">
-            <span class="contact__label">Téléphone</span>
-            <span class="contact__value">[+33 0 00 00 00 00]</span>
-          </a>
-          <div class="contact__row contact__row--static">
-            <span class="contact__label">[Label]</span>
-            <span class="contact__value">[Valeur statique, ex. adresse]</span>
-          </div>
-          <a href="#contact" class="btn btn--solid">[Action principale]</a>
-        </div>
+        <p class="eyebrow reveal"><span class="ltr">07</span> צור קשר</p>
+        <h2 class="contact__title" data-split><span class="line">בואו נדליק</span><span class="line line--accent">את זה.</span></h2>
+        <a class="contact__phone ltr reveal" href="tel:+972525550123" data-cursor="חייגו">052-555-0123</a>
+        <form class="form reveal" data-form novalidate>
+          <label class="field"><span>שם</span><input name="name" autocomplete="name" required /></label>
+          <label class="field"><span>טלפון</span><input name="phone" type="tel" inputmode="tel" autocomplete="tel" required /></label>
+          <label class="field field--wide"><span>במה אפשר לעזור?</span>
+            <select name="topic">
+              <option>לוח חשמל</option><option>הגדלת חיבור</option><option>תאורה</option><option>תקלה דחופה</option>
+              <option>עמדת טעינה</option><option>בית חכם</option><option>שיפוץ / דירה חדשה</option><option>אחר</option>
+            </select>
+          </label>
+          <label class="field field--wide"><span>פרטים (לא חובה)</span><textarea name="msg" rows="2"></textarea></label>
+          <button class="btn btn--solid form__send" type="submit" data-cursor="שליחה">שליחה בוואטסאפ</button>
+          <p class="form__note" data-form-note>ההודעה תיפתח בוואטסאפ, מוכנה לשליחה.</p>
+        </form>
       </div>
+      <footer class="foot">
+        <span>זרם · חשמלאי מוסמך · רישיון מס׳ <span class="ltr">0000000</span></span>
+        <span>מרכז · שרון · שפלה</span>
+        <span class="ltr">© <span data-year></span> ZEREM</span>
+      </footer>
     </section>
-
-    <!-- ============ FOOTER ============ -->
-    <footer class="footer" id="footer">
-      <div class="footer__inner">
-        <span class="footer__brand">[Marque <em>accentuée</em>]</span>
-        <p class="footer__tagline">[Signature / tagline en une ligne.]</p>
-      </div>
-      <div class="footer__base">
-        <span class="footer__legal">© 2026 — [Marque]. Tous droits réservés.</span>
-        <span class="footer__legal">Mentions légales · Confidentialité</span>
-      </div>
-    </footer>
-
   </main>
 
-  <!-- ↓ ?v=1 = cache-bust MANUEL de ce fichier. Bump-le quand tu modifies script.js.
-       Séparé de la variable CACHE_BUST (interne à script.js) qui ne busté QUE les frames. -->
-  <script src="script.js?v=1"></script>
+  <noscript><style>.loader{display:none}body.is-loading{overflow:auto}</style></noscript>
+  <script type="module" src="js/main.js?v=2"></script>
 </body>
 </html>
