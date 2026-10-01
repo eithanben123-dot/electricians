@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ↓ TITLE + DESCRIPTION : remplace par ton business (Claude le fera à l'étape 3) -->
+  <title>[NOM DU SITE] — [promesse en une ligne]</title>
+  <meta name="description" content="[Une phrase qui décrit ton offre / ton bien / ton produit.]" />
+
+  <!--
+    POLICES : ce starter utilise des polices système neutres (voir --serif / --sans
+    dans style.css). Pour une vraie identité, ajoute un <link> Google Fonts ici
+    PUIS mets les noms dans :root. Exemple :
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Work+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  -->
+
+  <!-- ↓ ?v=1 = cache-bust MANUEL de ce fichier. Bump-le (?v=2, ?v=3…) chaque fois
+       que tu modifies style.css. C'est SÉPARÉ de CACHE_BUST dans script.js, qui ne
+       gère QUE les frames du fly-through, pas les fichiers .css / .js. -->
+  <link rel="stylesheet" href="style.css?v=1" />
+</head>
+<body>
+
+  <div class="scroll-progress" aria-hidden="true"></div>
+
+  <!-- ============ NAV ============
+       Remplace [MARQUE] et les libellés de liens. Les href #ancres pointent
+       vers les id="" des sections plus bas — garde-les cohérents. -->
+  <header class="nav" id="nav">
+    <a href="#hero" class="nav__brand">[MARQUE]</a>
+    <nav class="nav__links" aria-label="Navigation principale">
+      <a href="#section-1">[Lien 1]</a>
+      <a href="#features">[Lien 2]</a>
+      <a href="#section-2">[Lien 3]</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <a href="#contact" class="nav__cta">[Action principale]</a>
+  </header>
+
+  <main>
+
+    <!-- ============ HERO — fly-through cinématique (scroll-scrub) ============
+         C'EST LE CŒUR DU SITE.
+         1. Exporte les frames de TON vol (Higgsfield → vidéo → frames JPEG).
+         2. Pose-les dans  assets/frames/  nommées frame-001.jpg, frame-002.jpg ...
+         3. Mets le NOMBRE exact de frames dans data-frames ci-dessous.
+         4. Recale la hauteur du hero dans style.css (.scrub) sur ~N × 4.6vh.
+         5. À chaque remplacement de frames, incrémente CACHE_BUST dans script.js.
+         Les "beats" (légendes) ci-dessous apparaissent en fondu pendant le vol :
+         data-in / data-out = position dans le scroll (0 = début, 1 = fin).
+
+         ⚠️ ÉTAT PAR DÉFAUT (avant TES frames) : le starter ship avec UNE frame
+         de démo (frame-001.jpg, un dégradé neutre) et data-frames="1". Au premier
+         serve, le hero affiche donc ce dégradé fixe sur une hauteur courte (160vh).
+         C'EST NORMAL — il s'animera dès que tu auras posé tes vraies frames et
+         mis data-frames à jour. Le starter n'est pas cassé. -->
+    <section class="scrub" id="hero" data-frames="1" aria-label="[Décris ton fly-through pour l'accessibilité]">
+      <div class="scrub__stage">
+        <canvas class="scrub__canvas" aria-hidden="true"></canvas>
+        <div class="scrub__scrim" aria-hidden="true"></div>
+
+        <!-- Loader (barre de préchargement des frames) -->
+        <div class="loader" id="loader" role="status" aria-live="polite">
+          <span class="loader__brand">[MARQUE]</span>
+          <span class="loader__track" aria-hidden="true"><span class="loader__bar" id="loaderBar"></span></span>
+          <span class="loader__pct" id="loaderPct">0%</span>
+        </div>
+
+        <!-- BEAT 1 — visible au tout début du vol -->
+        <div class="scrub__beat" data-in="-0.06" data-out="0.22">
+          <p class="scrub__eyebrow">[Sur-titre court]</p>
+          <h1 class="scrub__title">[Titre principal <em>accentué</em>]</h1>
+          <p class="scrub__tagline">[Une ligne d'accroche poétique ou directe.]</p>
+        </div>
+
+        <!-- BEAT 2 — milieu du vol -->
+        <div class="scrub__beat" data-in="0.30" data-out="0.48">
+          <p class="scrub__eyebrow">[Sur-titre]</p>
+          <h2 class="scrub__beat-title">[Idée 2<br /><em>sur deux lignes.</em>]</h2>
+          <p class="scrub__beat-copy">[Une ou deux phrases qui accompagnent ce moment du vol.]</p>
+        </div>
+
+        <!-- BEAT 3 — fin du vol, avec CTA.
+             data-in="0.82" = même grille narrative que le skill cinematic-site-design
+             (arc 82-100 % du scroll pour la fin du vol). La fenêtre 0.48→0.82 sans
+             légende est une RESPIRATION volontaire (la vidéo seule). 🔴 Ces valeurs
+             sont un POINT DE DÉPART : recale-les à l'œil à l'étape 5 du GUIDE une
+             fois tes vraies frames posées (scrolle, repère où la caméra arrive sur
+             chaque temps fort, ajuste). Si tu veux un beat intermédiaire dans la
+             respiration, demande-le à Claude Code (il ajoute un .scrub__beat). -->
+        <div class="scrub__beat" data-in="0.82" data-out="1.01">
+          <p class="scrub__eyebrow">[Sur-titre]</p>
+          <h2 class="scrub__beat-title">[Idée finale,<br /><em>l'arrivée.</em>]</h2>
+          <p class="scrub__beat-copy">[Phrase de clôture du vol.]</p>
+          <a href="#contact" class="btn btn--light">[Bouton d'action]</a>
+        </div>
+
+        <!-- Indice de scroll -->
+        <div class="scrub__cue" id="scrubCue" aria-hidden="true">
+          <span>[Faites défiler]</span>
+          <span class="scrub__cue-line"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ STATS — chiffres-clés ============
+         4 chiffres qui comptent pour ton business. Les nombres s'animent
+         (compteur) à l'apparition. Une valeur non-numérique (ex. une lettre)
+         reste statique. -->
+    <section class="stats" aria-label="[Tes chiffres-clés]">
+      <div class="stats__inner">
+        <div class="stat reveal" data-reveal>
+          <span class="stat__num">[00]<span class="stat__unit"> [unité]</span></span>
+          <span class="stat__label">[Libellé du chiffre]</span>
+        </div>
+        <div class="stat reveal" data-reveal>
+          <span class="stat__num">[00]<span class="stat__unit"> [unité]</span></span>
+          <span class="stat__label">[Libellé du chiffre]</span>
+        </div>
+        <div class="stat reveal" data-reveal>
+          <span class="stat__num">[00]</span>
+          <span class="stat__label">[Libellé du chiffre]</span>
+        </div>
+        <div class="stat reveal" data-reveal>
+          <span class="stat__num">[00]</span>
+          <span class="stat__label">[Libellé du chiffre]</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SECTION ÉDITORIALE 1 — image à droite, texte à gauche ============
+         Bloc storytelling. Mets une vraie image dans assets/img/ ou garde le
+         placeholder. La classe --reverse inverse l'ordre image/texte. -->
+    <section class="editorial editorial--reverse" id="section-1">
+      <div class="editorial__inner">
+        <div class="editorial__media reveal" data-reveal>
+          <figure class="frame">
+            <!-- 🔴 Bloc éditorial : l'<img> ci-dessous pointe par défaut sur le placeholder neutre
+                 (placeholder-1.jpg) pour que la section s'affiche DÈS le 1er serve (pas un trou noir).
+                 À l'étape 4 bis du GUIDE, tu ne fais PAS ce remplacement à la main : demande à Claude Code
+                 « branche mon image X dans la section présentation » — il change le src vers ton vrai
+                 fichier (généré sur Higgsfield, posé dans assets/img/) en gardant width/height. -->
+            <img src="assets/img/placeholder-1.jpg" alt="[Décris l'image]" width="1600" height="1000" loading="lazy" decoding="async" />
+          </figure>
+        </div>
+        <div class="editorial__text">
+          <p class="eyebrow reveal" data-reveal>[Sur-titre]</p>
+          <h2 class="editorial__title reveal" data-reveal>[Titre du bloc<br /><em>sur deux lignes.</em>]</h2>
+          <p class="lede reveal" data-reveal>
+            [Paragraphe principal : explique le bénéfice, raconte. 2-3 phrases.]
+          </p>
+          <p class="meta reveal" data-reveal>
+            [Ligne de détails secondaires, séparés par des points médians · comme · ceci.]
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FEATURES — liste de prestations / fonctionnalités ============
+         Titre sticky à gauche, liste numérotée à droite. Ajoute / retire
+         des <li> selon ton offre. -->
+    <section class="amenities" id="features">
+      <div class="amenities__inner">
+        <header class="amenities__head">
+          <p class="eyebrow reveal" data-reveal>[Sur-titre]</p>
+          <h2 class="amenities__title reveal" data-reveal>[Titre de la liste<br /><em>accentué.</em>]</h2>
+        </header>
+        <ol class="amenities__list">
+          <li class="amenity reveal" data-reveal>
+            <span class="amenity__index">01</span>
+            <span class="amenity__text">[Première prestation / point fort]</span>
+          </li>
+          <li class="amenity reveal" data-reveal>
+            <span class="amenity__index">02</span>
+            <span class="amenity__text">[Deuxième point]</span>
+          </li>
+          <li class="amenity reveal" data-reveal>
+            <span class="amenity__index">03</span>
+            <span class="amenity__text">[Troisième point]</span>
+          </li>
+          <li class="amenity reveal" data-reveal>
+            <span class="amenity__index">04</span>
+            <span class="amenity__text">[Quatrième point]</span>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ============ FULL-BLEED — image plein écran avec texte par-dessus ============
+         Image de fond + dégradé (scrim) + contenu. Léger parallaxe au scroll. -->
+    <section class="bleed bleed--tall" id="section-2" aria-label="[Décris la section]">
+      <img class="bleed__img" src="assets/img/placeholder-2.jpg" alt="[Décris l'image]" width="2560" height="1440" loading="lazy" decoding="async" />
+      <div class="bleed__scrim" aria-hidden="true"></div>
+      <div class="bleed__content bleed__content--low">
+        <p class="eyebrow eyebrow--light reveal" data-reveal>[Sur-titre]</p>
+        <h2 class="bleed__title reveal" data-reveal>[Titre<br /><em>en deux temps.</em>]</h2>
+        <p class="bleed__copy reveal" data-reveal>
+          [Paragraphe posé sur l'image. Garde-le court et lisible.]
+        </p>
+        <ul class="bleed__specs reveal" data-reveal>
+          <li><span class="bleed__spec-k">[Label]</span><span class="bleed__spec-v">[Valeur]</span></li>
+          <li><span class="bleed__spec-k">[Label]</span><span class="bleed__spec-v">[Valeur]</span></li>
+          <li><span class="bleed__spec-k">[Label]</span><span class="bleed__spec-v">[Valeur]</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============ MANIFESTE — déclaration centrée ============
+         Le moment "pourquoi". Court, marquant. -->
+    <section class="manifesto" id="manifeste">
+      <div class="manifesto__inner">
+        <p class="eyebrow eyebrow--center reveal" data-reveal>— [Sur-titre]</p>
+        <h2 class="manifesto__title reveal" data-reveal>
+          [Ta phrase manifeste,<br /><em>la promesse de fond.</em>]
+        </h2>
+        <p class="manifesto__copy reveal" data-reveal>
+          [2-3 phrases qui donnent le sens, la vision, l'émotion derrière l'offre.]
+        </p>
+      </div>
+    </section>
+
+    <!-- ============ CONTACT ============
+         Texte à gauche, coordonnées cliquables à droite. Mets tes vrais liens
+         mailto: / tel: . -->
+    <section class="contact" id="contact">
+      <div class="contact__inner">
+        <div class="contact__text">
+          <p class="eyebrow eyebrow--light reveal" data-reveal>[Sur-titre]</p>
+          <h2 class="contact__title reveal" data-reveal>
+            [Invitation à passer à l'action,<br />sur deux lignes.]
+          </h2>
+          <p class="contact__copy reveal" data-reveal>
+            [Phrase de réassurance : comment ça se passe, délai de réponse, etc.]
+          </p>
+        </div>
+        <div class="contact__details reveal" data-reveal>
+          <a class="contact__row" href="mailto:[email@exemple.fr]">
+            <span class="contact__label">Email</span>
+            <span class="contact__value">[email@exemple.fr]</span>
+          </a>
+          <a class="contact__row" href="tel:[+33000000000]">
+            <span class="contact__label">Téléphone</span>
+            <span class="contact__value">[+33 0 00 00 00 00]</span>
+          </a>
+          <div class="contact__row contact__row--static">
+            <span class="contact__label">[Label]</span>
+            <span class="contact__value">[Valeur statique, ex. adresse]</span>
+          </div>
+          <a href="#contact" class="btn btn--solid">[Action principale]</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FOOTER ============ -->
+    <footer class="footer" id="footer">
+      <div class="footer__inner">
+        <span class="footer__brand">[Marque <em>accentuée</em>]</span>
+        <p class="footer__tagline">[Signature / tagline en une ligne.]</p>
+      </div>
+      <div class="footer__base">
+        <span class="footer__legal">© 2026 — [Marque]. Tous droits réservés.</span>
+        <span class="footer__legal">Mentions légales · Confidentialité</span>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- ↓ ?v=1 = cache-bust MANUEL de ce fichier. Bump-le quand tu modifies script.js.
+       Séparé de la variable CACHE_BUST (interne à script.js) qui ne busté QUE les frames. -->
+  <script src="script.js?v=1"></script>
+</body>
+</html>
