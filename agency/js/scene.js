@@ -102,7 +102,7 @@ export function createWorld(canvas, opts = {}) {
   renderer.setPixelRatio(dpr);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.1;
+  renderer.toneMappingExposure = 1.0;
   const maxAniso = renderer.capabilities.getMaxAnisotropy();
 
   const scene = new THREE.Scene();
@@ -115,7 +115,7 @@ export function createWorld(canvas, opts = {}) {
   const camera = new THREE.PerspectiveCamera(35, 1, 0.05, 160);
   const composer = new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene, camera));
-  const bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), 0.62, 0.55, 0.97);
+  const bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), 0.3, 0.4, 1.05);
   composer.addPass(bloom);
   composer.addPass(new OutputPass());
 
@@ -149,7 +149,7 @@ export function createWorld(canvas, opts = {}) {
     vertexShader: `attribute float aSeed; uniform float uSize, uTime; varying float vA;
       void main(){ vec4 mv = modelViewMatrix * vec4(position,1.0); gl_Position = projectionMatrix * mv;
         gl_PointSize = uSize * (0.35 + aSeed) / -mv.z;
-        vA = (0.35 + 0.65 * aSeed) * (0.6 + 0.4 * sin(uTime * (0.6 + aSeed * 2.0) + aSeed * 40.0)) * smoothstep(60.0, 4.0, -mv.z); }`,
+        vA = (0.35 + 0.65 * aSeed) * (0.85 + 0.15 * sin(uTime * (0.3 + aSeed) + aSeed * 40.0)) * smoothstep(60.0, 4.0, -mv.z); }`,
     fragmentShader: `uniform vec3 uColor; uniform float uAlpha; varying float vA;
       void main(){ float d = length(gl_PointCoord - 0.5); float a = smoothstep(0.5, 0.0, d) * vA * uAlpha; gl_FragColor = vec4(uColor * a, a); }`,
     transparent: true, blending: THREE.AdditiveBlending, depthWrite: false,
@@ -178,11 +178,11 @@ export function createWorld(canvas, opts = {}) {
         varying vec3 vN; varying vec3 vView; varying float vNoise;
         void main(){
           vec3 n = normalize(position);
-          float t = uTime * 0.32;
-          float d = snoise(n * 1.5 + vec3(t, t * 0.7, -t)) * 0.22 + snoise(n * 4.2 - vec3(t * 1.4)) * 0.06;
-          float bulge = pow(max(dot(n, uPointer), 0.0), 5.0) * 0.32 * uPointerAmt;
+          float t = uTime * 0.16;
+          float d = snoise(n * 1.4 + vec3(t, t * 0.7, -t)) * 0.15 + snoise(n * 3.6 - vec3(t * 1.2)) * 0.03;
+          float bulge = pow(max(dot(n, uPointer), 0.0), 5.0) * 0.16 * uPointerAmt;
           float ang = acos(clamp(dot(n, uPointer), -1.0, 1.0));
-          float wave = uPulse >= 0.0 ? exp(-pow((ang - uPulse * 3.4) * 3.2, 2.0)) * 0.3 * (1.0 - uPulse) : 0.0;
+          float wave = uPulse >= 0.0 ? exp(-pow((ang - uPulse * 3.4) * 3.2, 2.0)) * 0.16 * (1.0 - uPulse) : 0.0;
           vNoise = d + wave;
           vec3 p = n * (1.0 + (d + bulge + wave) * uEnergy);
           vec4 mv = modelViewMatrix * vec4(p, 1.0);
@@ -193,7 +193,7 @@ export function createWorld(canvas, opts = {}) {
         void main(){
           float fres = pow(1.0 - max(dot(vN, vView), 0.0), 2.4);
           vec3 c = mix(uColA, uColB, smoothstep(-0.18, 0.22, vNoise));
-          vec3 col = c * (0.08 + 0.75 * smoothstep(-0.05, 0.3, vNoise)) + mix(uColB, vec3(1.0), 0.25) * fres * 1.35;
+          vec3 col = c * (0.08 + 0.75 * smoothstep(-0.05, 0.3, vNoise)) + mix(uColB, vec3(1.0), 0.2) * fres * 0.85;
           gl_FragColor = vec4(col * uGlow, 1.0);
         }`,
     });
@@ -205,19 +205,19 @@ export function createWorld(canvas, opts = {}) {
       ? new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.06, metalness: 0, transmission: 1, thickness: 0.5, ior: 1.45, iridescence: 1, iridescenceIOR: 1.5, iridescenceThicknessRange: [180, 620], clearcoat: 1, flatShading: true, envMapIntensity: 1.6 })
       : new THREE.MeshPhysicalMaterial({ color: 0x9fb4ff, roughness: 0.1, transparent: true, opacity: 0.12, iridescence: 1, flatShading: true, depthWrite: false }));
     g.add(shell);
-    const edges = new THREE.LineSegments(new THREE.EdgesGeometry(shellGeo), new THREE.LineBasicMaterial({ color: CYAN.clone().multiplyScalar(1.4), transparent: true, opacity: 0.35, blending: THREE.AdditiveBlending, depthWrite: false }));
+    const edges = new THREE.LineSegments(new THREE.EdgesGeometry(shellGeo), new THREE.LineBasicMaterial({ color: CYAN.clone().multiplyScalar(1.0), transparent: true, opacity: 0.22, blending: THREE.AdditiveBlending, depthWrite: false }));
     g.add(edges);
 
     const rings = [];
     [[radius * 1.85, 0.008, BLUE, [1.2, 0.2, 0]], [radius * 2.15, 0.006, VIOLET, [0.4, 0.9, 0.2]], [radius * 2.5, 0.004, CYAN, [-0.5, 0.3, 0.6]]].forEach(([r, tube, col, rot], i) => {
-      const ring = new THREE.Mesh(new THREE.TorusGeometry(r, tube * radius * 2.5, 8, 220), new THREE.MeshBasicMaterial({ color: col.clone().multiplyScalar(1.5) }));
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(r, tube * radius * 2.5, 8, 220), new THREE.MeshBasicMaterial({ color: col.clone().multiplyScalar(0.85) }));
       ring.rotation.set(...rot);
-      ring.userData.spin = (i % 2 ? -1 : 1) * (0.12 + i * 0.05);
+      ring.userData.spin = (i % 2 ? -1 : 1) * (0.05 + i * 0.02);
       g.add(ring); rings.push(ring);
     });
     // satellites riding the rings
     rings.forEach((ring) => {
-      const sat = new THREE.Mesh(new THREE.SphereGeometry(radius * 0.045, 12, 8), new THREE.MeshBasicMaterial({ color: new THREE.Color(3, 3, 3.4) }));
+      const sat = new THREE.Mesh(new THREE.SphereGeometry(radius * 0.045, 12, 8), new THREE.MeshBasicMaterial({ color: new THREE.Color(1.3, 1.3, 1.5) }));
       sat.position.x = ring.geometry.parameters.radius;
       ring.add(sat);
     });
@@ -225,24 +225,24 @@ export function createWorld(canvas, opts = {}) {
     // chrome shards in orbit
     const SH = 46;
     const shards = new THREE.InstancedMesh(new THREE.OctahedronGeometry(radius * 0.09, 0), chrome, SH);
-    const seeds = Array.from({ length: SH }, () => ({ r: radius * (2.0 + Math.random() * 1.8), a: Math.random() * TAU, y: (Math.random() - 0.5) * radius * 2.4, s: 0.5 + Math.random() * 1.2, sp: (0.05 + Math.random() * 0.12) * (Math.random() < 0.5 ? -1 : 1), rot: Math.random() * TAU }));
+    const seeds = Array.from({ length: SH }, () => ({ r: radius * (2.0 + Math.random() * 1.8), a: Math.random() * TAU, y: (Math.random() - 0.5) * radius * 2.4, s: 0.5 + Math.random() * 1.2, sp: (0.02 + Math.random() * 0.05) * (Math.random() < 0.5 ? -1 : 1), rot: Math.random() * TAU }));
     const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler(), sc = V(1, 1, 1), pp = V(0, 0, 0);
     g.add(shards);
 
-    g.add(halo(BLUE, radius * 3.6, 0.1));
+    g.add(halo(BLUE, radius * 3.2, 0.05));
     const api = {
       group: g, mat, shell, energy: 1, pointerAmt: 0, pulse: -1,
       update(dt, t) {
         rings.forEach((r) => { r.rotation.z += r.userData.spin * dt; });
-        shell.rotation.y += dt * 0.06; shell.rotation.x += dt * 0.03; edges.rotation.copy(shell.rotation);
+        shell.rotation.y += dt * 0.025; shell.rotation.x += dt * 0.012; edges.rotation.copy(shell.rotation);
         seeds.forEach((s, i) => {
           const a = s.a + t * s.sp;
-          pp.set(Math.cos(a) * s.r, s.y + Math.sin(t * 0.5 + s.rot) * 0.15, Math.sin(a) * s.r);
-          e.set(t * s.sp * 3 + s.rot, t * 0.3 + s.rot, 0); q.setFromEuler(e); sc.setScalar(s.s);
+          pp.set(Math.cos(a) * s.r, s.y + Math.sin(t * 0.3 + s.rot) * 0.08, Math.sin(a) * s.r);
+          e.set(t * s.sp * 2 + s.rot, t * 0.12 + s.rot, 0); q.setFromEuler(e); sc.setScalar(s.s);
           m4.compose(pp, q, sc); shards.setMatrixAt(i, m4);
         });
         shards.instanceMatrix.needsUpdate = true;
-        if (api.pulse >= 0) { api.pulse += dt * 0.9; if (api.pulse > 1) api.pulse = -1; }
+        if (api.pulse >= 0) { api.pulse += dt * 0.6; if (api.pulse > 1) api.pulse = -1; }
         mat.uniforms.uPulse.value = api.pulse;
         mat.uniforms.uEnergy.value = api.energy;
         mat.uniforms.uPointerAmt.value += (api.pointerAmt - mat.uniforms.uPointerAmt.value) * Math.min(1, dt * 4);
@@ -291,7 +291,7 @@ export function createWorld(canvas, opts = {}) {
 
   function makeDevice(kind, tex) {
     const g = new THREE.Group();
-    const screenMat = new THREE.MeshBasicMaterial({ map: tex, color: new THREE.Color(1.15, 1.15, 1.2) });
+    const screenMat = new THREE.MeshBasicMaterial({ map: tex, color: new THREE.Color(0.95, 0.95, 1.0) });
     tex.repeat.set(1, kind === 'phone' ? 0.42 : kind === 'tablet' ? 0.62 : 0.32);
     tex.offset.y = 1 - tex.repeat.y;
     let screen;
@@ -310,7 +310,7 @@ export function createWorld(canvas, opts = {}) {
       screen = new THREE.Mesh(new THREE.PlaneGeometry(w - 0.08, h - 0.08), screenMat); screen.position.z = 0.047; g.add(screen);
       if (kind === 'phone') { const isl = new THREE.Mesh(new RoundedBoxGeometry(0.24, 0.06, 0.01, 2, 0.03), new THREE.MeshBasicMaterial({ color: 0x000000 })); isl.position.set(0, h / 2 - 0.12, 0.052); g.add(isl); }
     }
-    const glow = halo(VIOLET, kind === 'laptop' ? 5 : 3.2, 0.12); glow.position.z = -0.6; g.add(glow);
+    const glow = halo(VIOLET, kind === 'laptop' ? 4 : 2.6, 0.05); glow.position.z = -0.6; g.add(glow);
     return { group: g, screen, tex };
   }
 
@@ -333,11 +333,11 @@ export function createWorld(canvas, opts = {}) {
     const lp = new Float32Array(edges.length * 6);
     edges.forEach(([i, j], k) => { lp.set([...nodes[i].toArray(), ...nodes[j].toArray()], k * 6); });
     const lg = new THREE.BufferGeometry(); lg.setAttribute('position', new THREE.BufferAttribute(lp, 3));
-    const lines = new THREE.LineSegments(lg, new THREE.LineBasicMaterial({ color: color.clone().multiplyScalar(0.9), transparent: true, opacity: 0.3, blending: THREE.AdditiveBlending, depthWrite: false }));
+    const lines = new THREE.LineSegments(lg, new THREE.LineBasicMaterial({ color: color.clone().multiplyScalar(0.8), transparent: true, opacity: 0.17, blending: THREE.AdditiveBlending, depthWrite: false }));
     g.add(lines);
     const dots = new THREE.InstancedMesh(new THREE.SphereGeometry(radius * 0.016, 10, 8), new THREE.MeshBasicMaterial({ color: 0xffffff }), n);
     const m = new THREE.Matrix4(), col = new THREE.Color();
-    nodes.forEach((p, i) => { m.makeTranslation(p.x, p.y, p.z); dots.setMatrixAt(i, m); dots.setColorAt(i, col.copy(i % 3 ? color : VIOLET).multiplyScalar(1.1 + Math.random() * 1.3)); });
+    nodes.forEach((p, i) => { m.makeTranslation(p.x, p.y, p.z); dots.setMatrixAt(i, m); dots.setColorAt(i, col.copy(i % 3 ? color : VIOLET).multiplyScalar(0.7 + Math.random() * 0.6)); });
     g.add(dots);
     // pulses travelling along edges
     const PN = Math.min(140, edges.length);
@@ -346,7 +346,7 @@ export function createWorld(canvas, opts = {}) {
     const pg = new THREE.BufferGeometry();
     pg.setAttribute('position', new THREE.BufferAttribute(pPos, 3).setUsage(THREE.DynamicDrawUsage));
     pg.setAttribute('aSeed', new THREE.BufferAttribute(pSeed, 1));
-    const pm = pointsMat(radius * 34, new THREE.Color(1.6, 1.8, 2.4));
+    const pm = pointsMat(radius * 26, new THREE.Color(0.8, 0.95, 1.3));
     const pts = new THREE.Points(pg, pm); pts.frustumCulled = false; g.add(pts);
     const tmp = V(0, 0, 0);
     return {
@@ -397,8 +397,8 @@ export function createWorld(canvas, opts = {}) {
   heroTab.group.position.set(-2.9, -2.4, -2.4); heroTab.group.rotation.set(-0.15, 0.55, 0.1); heroTab.group.scale.setScalar(0.95);
   hero.add(heroPhone.group, heroTab.group);
   tick((dt, t) => {
-    heroPhone.group.position.y = 2.5 + Math.sin(t * 0.7) * 0.18; heroPhone.group.rotation.y = 0.5 + Math.sin(t * 0.3) * 0.15;
-    heroTab.group.position.y = -2.4 + Math.sin(t * 0.55 + 1) * 0.16; heroTab.group.rotation.y = 0.55 + Math.sin(t * 0.25 + 2) * 0.12;
+    heroPhone.group.position.y = 2.5 + Math.sin(t * 0.4) * 0.08; heroPhone.group.rotation.y = 0.5 + Math.sin(t * 0.3) * 0.15;
+    heroTab.group.position.y = -2.4 + Math.sin(t * 0.35 + 1) * 0.07; heroTab.group.rotation.y = 0.55 + Math.sin(t * 0.25 + 2) * 0.12;
     heroPhone.tex.offset.y = (1 - heroPhone.tex.repeat.y) * (0.5 + 0.5 * Math.cos(t * 0.18));
     heroTab.tex.offset.y = (1 - heroTab.tex.repeat.y) * (0.5 + 0.5 * Math.cos(t * 0.15 + 1));
   });
@@ -411,7 +411,7 @@ export function createWorld(canvas, opts = {}) {
     const g = new THREE.Group(); g.position.x = SERVICE_X[0];
     const net = makeNetwork(70, 1.7, CYAN); g.add(net.group);
     const mini = makeCore(0.42, high ? 32 : 18, CYAN, VIOLET); g.add(mini.group);
-    tick((dt, t) => { net.update(dt); mini.update(dt, t); net.group.rotation.y += dt * 0.15; });
+    tick((dt, t) => { net.update(dt); mini.update(dt, t); net.group.rotation.y += dt * 0.05; });
     services.add(g); svcItems.push(g);
   }
   // 1 · websites — laptop
@@ -428,9 +428,9 @@ export function createWorld(canvas, opts = {}) {
     [[1.9, 1.3, 0.6], [-1.9, 0.8, 0.9], [1.4, -0.6, 1.4]].forEach(([px, py, pz], i) => {
       const m = new THREE.Mesh(new THREE.PlaneGeometry(1.1, 0.69), new THREE.MeshBasicMaterial({ map: panelTex, transparent: true, depthWrite: false, color: new THREE.Color(1.4, 1.4, 1.6) }));
       m.position.set(px, py, pz); m.rotation.y = -px * 0.15; g.add(m);
-      tick((dt, t) => { m.position.y = py + Math.sin(t * 0.8 + i * 2) * 0.12; });
+      tick((dt, t) => { m.position.y = py + Math.sin(t * 0.4 + i * 2) * 0.05; });
     });
-    tick((dt, t) => { lap.tex.offset.y = (1 - lap.tex.repeat.y) * (0.5 + 0.5 * Math.cos(t * 0.22)); lap.group.rotation.y = -0.45 + Math.sin(t * 0.3) * 0.08; });
+    tick((dt, t) => { lap.tex.offset.y = (1 - lap.tex.repeat.y) * (0.5 + 0.5 * Math.cos(t * 0.12)); lap.group.rotation.y = -0.45 + Math.sin(t * 0.15) * 0.03; });
     services.add(g); svcItems.push(g);
   }
   // 2 · automation — meshing gears + flowing pipes
@@ -442,7 +442,7 @@ export function createWorld(canvas, opts = {}) {
     const g2 = new THREE.Mesh(gearGeo(12, 0.68, 0.22), gm2); g2.position.set(1.52, 0.42, 0.05);
     const g3 = new THREE.Mesh(gearGeo(14, 0.78, 0.22), gm); g3.position.set(-1.05, -1.22, -0.05);
     g.add(g1, g2, g3);
-    const pipeMat = pulseMat(CYAN, { speed: 0.5, density: 3, intensity: 4 });
+    const pipeMat = pulseMat(CYAN, { speed: 0.25, density: 3, intensity: 1.8 });
     [[V(-2.8, 1.6, -0.6), V(-1.4, 1.9, 0.2), V(0, 1.4, 0.4), V(1.6, 1.6, -0.2), V(2.9, 0.6, -0.8)],
       [V(2.6, -1.8, -0.4), V(1.0, -1.6, 0.5), V(-0.4, -2.2, 0.3), V(-2.6, -0.4, -0.6)]].forEach((pts) => {
       const c = new THREE.CatmullRomCurve3(pts);
@@ -450,7 +450,7 @@ export function createWorld(canvas, opts = {}) {
       g.add(new THREE.Mesh(new THREE.TubeGeometry(c, 120, 0.06, 8), pipeMat));
     });
     g.rotation.set(0.25, -0.35, 0);
-    tick((dt) => { g1.rotation.z += dt * 0.4; g2.rotation.z -= dt * 0.4 * 18 / 12; g3.rotation.z -= dt * 0.4 * 18 / 14; });
+    tick((dt) => { g1.rotation.z += dt * 0.18; g2.rotation.z -= dt * 0.18 * 18 / 12; g3.rotation.z -= dt * 0.18 * 18 / 14; });
     services.add(g); svcItems.push(g);
   }
   svcItems.forEach((g, i) => pickables.push({ obj: g, info: { type: 'service', index: i }, recursive: true }));
@@ -460,14 +460,14 @@ export function createWorld(canvas, opts = {}) {
   const brain = makeNetwork(high ? 180 : 110, 3.0, BLUE);
   agents.add(brain.group);
   const AGENT_COLORS = [[CYAN, BLUE], [VIOLET, MAGENTA], [BLUE, CYAN], [MAGENTA, VIOLET]];
-  const AGENT_POS = [V(-4.1, 1.7, 0.2), V(1.3, 2.8, 0.1), V(-3.5, -2.1, 0.3), V(1.1, -2.7, 0.2)];
+  const AGENT_POS = [V(-3.9, 1.6, 0.2), V(0.5, 2.1, -0.4), V(-3.3, -1.9, 0.3), V(0.4, -2.0, -0.4)];
   const agentOrbs = AGENT_POS.map((p, i) => {
     const o = makeCore(0.3, high ? 28 : 16, AGENT_COLORS[i][0], AGENT_COLORS[i][1]);
     o.group.position.copy(p);
     agents.add(o.group);
     // synapses to nearest nodes
     const near = brain.nodes.map((n, k) => [k, n.distanceToSquared(p)]).sort((a, b) => a[1] - b[1]).slice(0, 6);
-    const mat = pulseMat(AGENT_COLORS[i][0], { speed: 0.8, density: 1.5, intensity: 1.5 });
+    const mat = pulseMat(AGENT_COLORS[i][0], { speed: 0.4, density: 1.5, intensity: 1 });
     near.forEach(([k]) => {
       const c = new THREE.CatmullRomCurve3([p.clone(), p.clone().lerp(brain.nodes[k], 0.5).add(V(0, 0.3, 0)), brain.nodes[k].clone()]);
       agents.add(new THREE.Mesh(new THREE.TubeGeometry(c, 30, 0.014, 5), mat));
@@ -477,16 +477,16 @@ export function createWorld(canvas, opts = {}) {
   });
   tick((dt, t) => {
     brain.update(dt);
-    brain.group.rotation.y = Math.sin(t * 0.1) * 0.25;
+    brain.group.rotation.y = Math.sin(t * 0.05) * 0.12;
     agentOrbs.forEach((a, i) => {
       a.core.update(dt, t);
       const on = state.activeAgent === i ? 1 : 0;
       a.glow += (on - a.glow) * Math.min(1, dt * 4);
       a.core.group.scale.setScalar(1 + a.glow * 0.45);
-      a.core.mat.uniforms.uGlow.value = 0.5 + a.glow * 0.7;
-      a.mat.uniforms.uI.value = 0.6 + a.glow * 5;
-      a.mat.uniforms.uSpeed.value = 0.6 + a.glow * 0.8;
-      a.core.group.position.y = AGENT_POS[i].y + Math.sin(t * 0.6 + i) * 0.12;
+      a.core.mat.uniforms.uGlow.value = 0.5 + a.glow * 0.45;
+      a.mat.uniforms.uI.value = 0.4 + a.glow * 2;
+      a.mat.uniforms.uSpeed.value = 0.3 + a.glow * 0.3;
+      a.core.group.position.y = AGENT_POS[i].y + Math.sin(t * 0.35 + i) * 0.05;
     });
   });
 
@@ -506,28 +506,28 @@ export function createWorld(canvas, opts = {}) {
     pickables.push({ obj: holder, info: { type: 'project', index: i }, recursive: true });
     return { ...d, holder, hover: 0 };
   });
-  const floorRing = new THREE.Mesh(new THREE.TorusGeometry(R, 0.012, 6, 240), new THREE.MeshBasicMaterial({ color: VIOLET.clone().multiplyScalar(2.2) }));
+  const floorRing = new THREE.Mesh(new THREE.TorusGeometry(R, 0.012, 6, 240), new THREE.MeshBasicMaterial({ color: VIOLET.clone().multiplyScalar(1.1) }));
   floorRing.rotation.x = Math.PI / 2; floorRing.position.y = -1.6; folio.add(floorRing);
   const floorGlow = new THREE.Mesh(new THREE.CircleGeometry(R * 1.25, 64), new THREE.ShaderMaterial({
     uniforms: { uTime },
     vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
     fragmentShader: `uniform float uTime; varying vec2 vUv;
       void main(){ vec2 p = vUv - 0.5; float r = length(p) * 2.0; float ring = smoothstep(0.02, 0.0, abs(fract(r * 6.0 - uTime * 0.2) - 0.5) - 0.47);
-        float a = (1.0 - r) * 0.18 + ring * 0.25 * (1.0 - r); gl_FragColor = vec4(vec3(0.3, 0.35, 1.0) * a, a); }`,
+        float a = (1.0 - r) * 0.1 + ring * 0.1 * (1.0 - r); gl_FragColor = vec4(vec3(0.3, 0.35, 1.0) * a, a); }`,
     transparent: true, blending: THREE.AdditiveBlending, depthWrite: false,
   }));
   floorGlow.rotation.x = -Math.PI / 2; floorGlow.position.y = -1.62; folio.add(floorGlow);
   let carouselAngle = 0;
   tick((dt, t) => {
     const target = -state.project * (TAU / PROJECTS.length);
-    carouselAngle += (target - carouselAngle) * Math.min(1, dt * (reduced ? 30 : 3.2));
+    carouselAngle += (target - carouselAngle) * Math.min(1, dt * (reduced ? 30 : 2.2));
     carousel.rotation.y = carouselAngle;
     devices.forEach((d, i) => {
       d.tex.offset.y = (1 - d.tex.repeat.y) * (0.5 + 0.5 * Math.cos(t * 0.2 + i));
       const h = state.hover && state.hover.type === 'project' && state.hover.index === i ? 1 : 0;
       d.hover += (h - d.hover) * Math.min(1, dt * 6);
-      d.group.position.y = Math.sin(t * 0.7 + i * 1.3) * 0.1 + d.hover * 0.25;
-      d.group.rotation.x = -d.hover * 0.08 + Math.sin(t * 0.4 + i) * 0.03;
+      d.group.position.y = Math.sin(t * 0.4 + i * 1.3) * 0.04 + d.hover * 0.15;
+      d.group.rotation.x = -d.hover * 0.05;
     });
   });
 
@@ -536,7 +536,7 @@ export function createWorld(canvas, opts = {}) {
   const gates = [0.22, 0.46, 0.7, 0.9].map((u, i) => {
     const p = TUNNEL.getPointAt(u), tan = TUNNEL.getTangentAt(u);
     const g = new THREE.Group(); g.position.copy(p); g.lookAt(p.clone().add(tan));
-    const ringMat = new THREE.MeshBasicMaterial({ color: (i % 2 ? VIOLET : CYAN).clone().multiplyScalar(2.4) });
+    const ringMat = new THREE.MeshBasicMaterial({ color: (i % 2 ? VIOLET : CYAN).clone().multiplyScalar(1.3) });
     const ring = new THREE.Mesh(new THREE.TorusGeometry(2.1, 0.02, 8, 160), ringMat); g.add(ring);
     const ring2 = new THREE.Mesh(new THREE.TorusGeometry(2.35, 0.006, 6, 160), ringMat); g.add(ring2);
     // numbered ticks
@@ -545,7 +545,7 @@ export function createWorld(canvas, opts = {}) {
       const a = (k / 24) * TAU; tk.position.set(Math.cos(a) * 2.55, Math.sin(a) * 2.55, 0); tk.rotation.z = a - Math.PI / 2; g.add(tk);
     }
     const numTex = canvasTex(256, 256, (x, w) => { x.clearRect(0, 0, w, w); x.fillStyle = '#fff'; x.font = '500 120px "Space Grotesk", Arial'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(String(i + 1).padStart(2, '0'), w / 2, w / 2); });
-    const num = new THREE.Mesh(new THREE.PlaneGeometry(0.7, 0.7), new THREE.MeshBasicMaterial({ map: numTex, transparent: true, depthWrite: false, color: new THREE.Color(1.6, 1.6, 2) }));
+    const num = new THREE.Mesh(new THREE.PlaneGeometry(0.7, 0.7), new THREE.MeshBasicMaterial({ map: numTex, transparent: true, depthWrite: false, color: new THREE.Color(1, 1, 1.15) }));
     num.position.set(-2.1, 1.6, 0); num.rotation.y = Math.PI; g.add(num);
     tunnel.add(g);
     return { g, ring, ring2, mat: ringMat, base: ringMat.color.clone(), lit: 0 };
@@ -563,19 +563,19 @@ export function createWorld(canvas, opts = {}) {
       q.setFromUnitVectors(z, tan);
       m.compose(p, q, V(1, 1, 0.5 + Math.random() * 2.5));
       streak.setMatrixAt(i, m);
-      streak.setColorAt(i, col.copy(Math.random() < 0.5 ? CYAN : VIOLET).multiplyScalar(0.6 + Math.random() * 2));
+      streak.setColorAt(i, col.copy(Math.random() < 0.5 ? CYAN : VIOLET).multiplyScalar(0.25 + Math.random() * 0.75));
     }
   }
   tunnel.add(streak);
   // data stream flowing down the centre
-  const stream = new THREE.Mesh(new THREE.TubeGeometry(TUNNEL, 400, 0.03, 6), pulseMat(CYAN, { speed: 0.35, density: 14, intensity: 4 }));
+  const stream = new THREE.Mesh(new THREE.TubeGeometry(TUNNEL, 400, 0.03, 6), pulseMat(CYAN, { speed: 0.18, density: 10, intensity: 1.6 }));
   stream.position.y = -1.4; tunnel.add(stream);
   tick((dt) => {
     gates.forEach((g, i) => {
       const on = state.step >= i ? 1 : 0;
       g.lit += (on - g.lit) * Math.min(1, dt * 4);
       g.mat.color.copy(g.base).multiplyScalar(0.25 + g.lit * 0.9);
-      g.ring.rotation.z += dt * (0.1 + g.lit * 0.5) * (i % 2 ? -1 : 1);
+      g.ring.rotation.z += dt * (0.03 + g.lit * 0.08) * (i % 2 ? -1 : 1);
     });
   });
 
@@ -606,7 +606,7 @@ export function createWorld(canvas, opts = {}) {
   shapes.forEach((s, i) => morphGeo.setAttribute('p' + i, new THREE.BufferAttribute(s, 3)));
   morphGeo.setAttribute('aRand', new THREE.BufferAttribute(aRand, 1));
   const morphMat = new THREE.ShaderMaterial({
-    uniforms: { uTime, uMorph: { value: 0 }, uSize: { value: 52 * dpr }, uPointer: { value: V(99, 99, 99) } },
+    uniforms: { uTime, uMorph: { value: 0 }, uSize: { value: 42 * dpr }, uPointer: { value: V(99, 99, 99) } },
     vertexShader: `attribute vec3 p0, p1, p2, p3; attribute float aRand; uniform float uTime, uMorph, uSize; uniform vec3 uPointer; varying vec3 vC; varying float vA;
       void main(){
         float m = clamp(uMorph, 0.0, 3.0);
@@ -616,28 +616,28 @@ export function createWorld(canvas, opts = {}) {
         if (m >= 3.0) { a = p3; b = p3; }
         float e = smoothstep(0.0, 1.0, clamp((f - aRand * 0.35) / 0.65, 0.0, 1.0));
         vec3 pos = mix(a, b, e);
-        float swirl = sin(e * 3.14159) * (1.2 + aRand);
+        float swirl = sin(e * 3.14159) * (0.4 + aRand * 0.4);
         float cs = cos(swirl), sn = sin(swirl);
         pos.xz = mat2(cs, -sn, sn, cs) * pos.xz;
-        pos += 0.04 * vec3(sin(uTime + aRand * 30.0), cos(uTime * 0.8 + aRand * 20.0), sin(uTime * 0.6 + aRand * 10.0));
+        pos += 0.02 * vec3(sin(uTime * 0.5 + aRand * 30.0), cos(uTime * 0.4 + aRand * 20.0), sin(uTime * 0.3 + aRand * 10.0));
         vec3 toP = pos - uPointer; float dP = length(toP);
-        pos += normalize(toP) * smoothstep(1.4, 0.0, dP) * 0.7;
+        pos += normalize(toP) * smoothstep(1.2, 0.0, dP) * 0.35;
         vec4 mv = modelViewMatrix * vec4(pos, 1.0);
         gl_Position = projectionMatrix * mv;
         gl_PointSize = uSize * (0.4 + aRand * 0.8) / -mv.z;
         vC = mix(vec3(0.25, 0.55, 1.0), vec3(0.7, 0.35, 1.0), smoothstep(-2.0, 2.0, pos.y + aRand));
         vA = 0.55 + 0.45 * aRand;
       }`,
-    fragmentShader: `varying vec3 vC; varying float vA; void main(){ float d = length(gl_PointCoord - 0.5); float a = smoothstep(0.5, 0.0, d) * vA; gl_FragColor = vec4(vC * a * 2.6, a); }`,
+    fragmentShader: `varying vec3 vC; varying float vA; void main(){ float d = length(gl_PointCoord - 0.5); float a = smoothstep(0.5, 0.0, d) * vA; gl_FragColor = vec4(vC * a * 1.35, a); }`,
     transparent: true, blending: THREE.AdditiveBlending, depthWrite: false,
   });
   const morph = new THREE.Points(morphGeo, morphMat); morph.frustumCulled = false;
   benefits.add(morph);
   let morphV = 0;
   tick((dt, t) => {
-    morphV += (state.morph - morphV) * Math.min(1, dt * (reduced ? 30 : 3));
+    morphV += (state.morph - morphV) * Math.min(1, dt * (reduced ? 30 : 1.8));
     morphMat.uniforms.uMorph.value = morphV;
-    morph.rotation.y = t * 0.08;
+    morph.rotation.y = t * 0.03;
   });
 
   /* ================================================================ 07 SHOWCASE */
@@ -650,25 +650,25 @@ export function createWorld(canvas, opts = {}) {
   const wire = new THREE.Group();
   {
     const ico = new THREE.IcosahedronGeometry(1.7, 3);
-    wire.add(new THREE.LineSegments(new THREE.WireframeGeometry(ico), new THREE.LineBasicMaterial({ color: CYAN.clone().multiplyScalar(1.6), transparent: true, opacity: 0.45, blending: THREE.AdditiveBlending, depthWrite: false })));
+    wire.add(new THREE.LineSegments(new THREE.WireframeGeometry(ico), new THREE.LineBasicMaterial({ color: CYAN.clone().multiplyScalar(1.0), transparent: true, opacity: 0.3, blending: THREE.AdditiveBlending, depthWrite: false })));
     const pg = new THREE.BufferGeometry(); pg.setAttribute('position', ico.getAttribute('position'));
     pg.setAttribute('aSeed', new THREE.BufferAttribute(new Float32Array(ico.getAttribute('position').count).map(() => Math.random()), 1));
-    wire.add(new THREE.Points(pg, pointsMat(60, new THREE.Color(1.5, 1.4, 2.6))));
+    wire.add(new THREE.Points(pg, pointsMat(50, new THREE.Color(0.9, 0.9, 1.4))));
   }
   const modes = [showCore.group, knot, wire];
   modes.forEach((m, i) => { m.visible = i === 0; spinner.add(m); });
   pickables.push({ obj: spinner, info: { type: 'showcase' }, recursive: true });
-  const spin = { vx: 0, vy: 0.25, x: 0, y: 0, dragging: false, scale: modes.map((_, i) => (i === 0 ? 1 : 0)) };
+  const spin = { vx: 0, vy: 0.1, x: 0, y: 0, dragging: false, scale: modes.map((_, i) => (i === 0 ? 1 : 0)) };
   tick((dt, t) => {
     showCore.update(dt, t);
-    if (!spin.dragging) { spin.vy += (0.25 - spin.vy) * Math.min(1, dt * 0.8); spin.vx += (0 - spin.vx) * Math.min(1, dt * 0.8); }
+    if (!spin.dragging) { spin.vy += (0.1 - spin.vy) * Math.min(1, dt * 0.8); spin.vx += (0 - spin.vx) * Math.min(1, dt * 0.8); }
     spin.y += spin.vy * dt; spin.x += spin.vx * dt; spin.x *= 0.995;
     spinner.rotation.set(spin.x, spin.y, 0);
     modes.forEach((m, i) => {
       const target = state.mode === i ? 1 : 0;
       spin.scale[i] += (target - spin.scale[i]) * Math.min(1, dt * 6);
       m.visible = spin.scale[i] > 0.01;
-      m.scale.setScalar(Math.max(0.001, spin.scale[i]) * (1 + Math.sin(t * 1.3) * 0.02));
+      m.scale.setScalar(Math.max(0.001, spin.scale[i]));
     });
   });
 
@@ -678,8 +678,8 @@ export function createWorld(canvas, opts = {}) {
     uniforms: { uTime },
     vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
     fragmentShader: `uniform float uTime; varying vec2 vUv;
-      void main(){ float k = 0.5 + 0.5 * sin(vUv.x * 6.2831 * 2.0 - uTime * 1.2);
-        vec3 c = mix(vec3(0.2, 0.6, 1.6), vec3(1.2, 0.4, 2.2), k) * (0.7 + k * 0.9); gl_FragColor = vec4(c, 1.0); }`,
+      void main(){ float k = 0.5 + 0.5 * sin(vUv.x * 6.2831 * 2.0 - uTime * 0.4);
+        vec3 c = mix(vec3(0.2, 0.6, 1.6), vec3(1.2, 0.4, 2.2), k) * (0.45 + k * 0.45); gl_FragColor = vec4(c, 1.0); }`,
   }));
   portal.add(portalRing);
   const vortex = new THREE.Mesh(new THREE.CircleGeometry(3.85, 128), new THREE.ShaderMaterial({
@@ -687,10 +687,10 @@ export function createWorld(canvas, opts = {}) {
     vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
     fragmentShader: NOISE + `uniform float uTime; varying vec2 vUv;
       void main(){ vec2 p = (vUv - 0.5) * 2.0; float r = length(p); float a = atan(p.y, p.x);
-        float sw = a + r * 4.0 - uTime * 0.6;
+        float sw = a + r * 4.0 - uTime * 0.25;
         float n = snoise(vec3(cos(sw) * r * 2.0, sin(sw) * r * 2.0, uTime * 0.15)) * 0.5 + 0.5;
         float band = pow(n, 3.0) * smoothstep(1.0, 0.25, r) * smoothstep(0.0, 0.25, r);
-        vec3 c = mix(vec3(0.15, 0.4, 1.0), vec3(0.65, 0.25, 1.0), n) * band * 0.95 + vec3(0.1, 0.12, 0.35) * smoothstep(1.0, 0.0, r) * 0.3;
+        vec3 c = mix(vec3(0.15, 0.4, 1.0), vec3(0.65, 0.25, 1.0), n) * band * 0.55 + vec3(0.1, 0.12, 0.35) * smoothstep(1.0, 0.0, r) * 0.3;
         gl_FragColor = vec4(c, band); }`,
     transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide,
   }));
@@ -698,7 +698,7 @@ export function createWorld(canvas, opts = {}) {
   const portalCore = makeCore(0.7, high ? 40 : 22, CYAN, MAGENTA);
   portal.add(portalCore.group);
   pickables.push({ obj: portalCore.shell, info: { type: 'portal' } });
-  tick((dt, t) => { portalCore.update(dt, t); portalRing.rotation.z = t * 0.05; });
+  tick((dt, t) => { portalCore.update(dt, t); portalRing.rotation.z = t * 0.02; });
 
   /* ================================================================ ENVIRONMENT */
   // holographic floor grid along the whole route
@@ -711,8 +711,8 @@ export function createWorld(canvas, opts = {}) {
         float line = 1.0 - min(min(g.x, g.y), 1.0);
         float d = distance(vW.xz, uCam.xz);
         float fade = exp(-d * 0.055);
-        float scan = smoothstep(0.92, 1.0, 1.0 - abs(fract(vW.z * 0.025 + uTime * 0.05) - 0.5) * 2.0);
-        vec3 col = mix(vec3(0.15, 0.3, 0.9), vec3(0.55, 0.3, 1.0), 0.5 + 0.5 * sin(vW.x * 0.05)) * line * (0.35 + scan * 1.5);
+        float scan = smoothstep(0.92, 1.0, 1.0 - abs(fract(vW.z * 0.025 + uTime * 0.02) - 0.5) * 2.0);
+        vec3 col = mix(vec3(0.15, 0.3, 0.9), vec3(0.55, 0.3, 1.0), 0.5 + 0.5 * sin(vW.x * 0.05)) * line * (0.3 + scan * 0.4);
         float a = line * fade * 0.8;
         gl_FragColor = vec4(col * fade, a);
       }`,
@@ -726,13 +726,13 @@ export function createWorld(canvas, opts = {}) {
   const sp = new Float32Array(SN * 3), ss = new Float32Array(SN);
   for (let i = 0; i < SN; i++) { sp.set([(Math.random() - 0.5) * 90, (Math.random() - 0.35) * 50, 30 - Math.random() * 290], i * 3); ss[i] = Math.random(); }
   const sg = new THREE.BufferGeometry(); sg.setAttribute('position', new THREE.BufferAttribute(sp, 3)); sg.setAttribute('aSeed', new THREE.BufferAttribute(ss, 1));
-  const stars = new THREE.Points(sg, pointsMat(42, new THREE.Color(0.75, 0.82, 1.3))); stars.frustumCulled = false;
+  const stars = new THREE.Points(sg, pointsMat(34, new THREE.Color(0.55, 0.6, 0.9))); stars.frustumCulled = false;
   scene.add(stars);
 
   // lights ride with the camera so every chapter gets the same blue/violet rim
   const rig = new THREE.Group(); scene.add(rig);
-  const lBlue = new THREE.PointLight(0x3d7bff, 60, 30, 1.6); lBlue.position.set(-6, 3, -3); rig.add(lBlue);
-  const lViolet = new THREE.PointLight(0x9a5cff, 60, 30, 1.6); lViolet.position.set(6, -2, -4); rig.add(lViolet);
+  const lBlue = new THREE.PointLight(0x3d7bff, 40, 30, 1.6); lBlue.position.set(-6, 3, -3); rig.add(lBlue);
+  const lViolet = new THREE.PointLight(0x9a5cff, 40, 30, 1.6); lViolet.position.set(6, -2, -4); rig.add(lViolet);
   const lKey = new THREE.DirectionalLight(0xdfe6ff, 1.2); lKey.position.set(2, 5, 6); rig.add(lKey); rig.add(lKey.target);
   scene.add(new THREE.HemisphereLight(0x5a6cff, 0x05040a, 0.35));
 
@@ -845,7 +845,7 @@ export function createWorld(canvas, opts = {}) {
     vertexShader: `attribute float aLife; uniform float uSize; varying float vL;
       void main(){ vL = aLife; vec4 mv = modelViewMatrix * vec4(position,1.0); gl_Position = projectionMatrix * mv; gl_PointSize = aLife > 0.0 ? uSize * aLife / -mv.z : 0.0; }`,
     fragmentShader: `varying float vL; void main(){ float d = length(gl_PointCoord - 0.5); float a = smoothstep(0.5, 0.0, d) * vL;
-      gl_FragColor = vec4(mix(vec3(0.5, 0.3, 1.0), vec3(0.6, 0.9, 1.0), vL) * a * 4.0, a); }`,
+      gl_FragColor = vec4(mix(vec3(0.5, 0.3, 1.0), vec3(0.6, 0.9, 1.0), vL) * a * 1.6, a); }`,
     transparent: true, blending: THREE.AdditiveBlending, depthWrite: false,
   });
   const burstPts = new THREE.Points(bg, bMat); burstPts.frustumCulled = false; scene.add(burstPts);
@@ -891,18 +891,18 @@ export function createWorld(canvas, opts = {}) {
     const s = sample(scrollY);
     if (s) {
       if (state.intro < 1) { const k = 1 - ease(state.intro); s.pos.add(tmp.set(0, 2.5 * k, 18 * k)); }
-      mouse.sx += (mouse.x - mouse.sx) * Math.min(1, dt * 3);
-      mouse.sy += (mouse.y - mouse.sy) * Math.min(1, dt * 3);
+      mouse.sx += (mouse.x - mouse.sx) * Math.min(1, dt * 1.6);
+      mouse.sy += (mouse.y - mouse.sy) * Math.min(1, dt * 1.6);
       fwd.copy(s.look).sub(s.pos).normalize();
       right.crossVectors(fwd, camera.up).normalize(); up.crossVectors(right, fwd).normalize();
       const par = reduced ? 0 : 1;
-      s.pos.addScaledVector(right, mouse.sx * 0.45 * par).addScaledVector(up, mouse.sy * 0.3 * par);
-      const k = reduced ? 1 : 1 - Math.exp(-dt * 8);
+      s.pos.addScaledVector(right, mouse.sx * 0.16 * par).addScaledVector(up, mouse.sy * 0.1 * par);
+      const k = reduced ? 1 : 1 - Math.exp(-dt * 4.5);
       camPos.lerp(s.pos, k); camLook.lerp(s.look, k);
       camera.position.copy(camPos); camera.lookAt(camLook);
       // tunnel roll
       const tr = state.step >= 0 && state.step < 4 && camera.position.z < P.tunnelA.z && camera.position.z > P.tunnelB.z;
-      camera.rotateZ(tr && !reduced ? Math.sin(time * 0.3) * 0.04 : 0);
+      void tr;
     }
     rig.position.copy(camera.position); rig.quaternion.copy(camera.quaternion);
 
@@ -914,15 +914,15 @@ export function createWorld(canvas, opts = {}) {
     core.pointerAmt = tmp.length() < 4.5 && !reduced ? 1 : 0;
     invQ.copy(core.group.getWorldQuaternion(new THREE.Quaternion())).invert();
     core.mat.uniforms.uPointer.value.copy(tmp.normalize().applyQuaternion(invQ));
-    if (!reduced) { core.group.rotation.y += dt * 0.08; core.group.rotation.x = mouse.sy * 0.15; }
+    if (!reduced) { core.group.rotation.y += dt * 0.03; core.group.rotation.x = mouse.sy * 0.06; }
 
     // services: focus scaling
     svcItems.forEach((g, i) => {
       const on = state.activeService === i ? 1 : 0;
       g.userData.f = (g.userData.f ?? on) + (on - (g.userData.f ?? on)) * Math.min(1, dt * 4);
       g.scale.setScalar(0.82 + g.userData.f * 0.18);
-      g.position.y = Math.sin(time * 0.6 + i * 2) * 0.15;
-      if (!reduced && i < 2) g.rotation.y += (mouse.sx * 0.25 - g.rotation.y) * Math.min(1, dt * 2);
+      g.position.y = Math.sin(time * 0.35 + i * 2) * 0.06;
+      if (!reduced && i < 2) g.rotation.y += (mouse.sx * 0.1 - g.rotation.y) * Math.min(1, dt * 1.2);
     });
 
     // benefits pointer repulsion (pointer projected to the cloud's plane)

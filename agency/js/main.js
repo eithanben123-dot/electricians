@@ -70,7 +70,7 @@ try {
 }
 
 /* ------------------------------------------------------------ scroll */
-const lenis = reduced ? null : new Lenis({ autoRaf: false, lerp: 0.08, wheelMultiplier: 0.85, touchMultiplier: 1.4 });
+const lenis = reduced ? null : new Lenis({ autoRaf: false, lerp: 0.07, wheelMultiplier: 0.8, touchMultiplier: 1.2 });
 lenis?.stop();
 const scrollTo = (y, duration = 2.2) => (lenis ? lenis.scrollTo(y, { duration, easing: (t) => 1 - Math.pow(1 - t, 4) }) : window.scrollTo(0, y));
 const scrollY = () => (lenis ? lenis.animatedScroll : window.scrollY);
