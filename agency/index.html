@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>AETHER · סטודיו AI ואתרים</title>
+  <meta name="description" content="AETHER — סטודיו לבינה מלאכותית ופיתוח ווב. סוכני AI, אתרים בהתאמה אישית ואוטומציה עסקית, ברמה של סוכנות דיגיטלית מהשורה הראשונה." />
+  <meta name="theme-color" content="#04050b" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700;800&family=Heebo:wght@300;400;500&family=Space+Grotesk:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="vendor/lenis/lenis.css" />
+  <link rel="stylesheet" href="style.css?v=1" />
+  <script type="importmap">
+    { "imports": { "three": "./vendor/three/three.module.js", "three/addons/": "./vendor/three/addons/" } }
+  </script>
+</head>
+<body class="is-loading">
+
+  <div class="boot" aria-hidden="true">
+    <div class="boot__grid"></div>
+    <div class="boot__inner">
+      <span class="boot__logo">AETHER</span>
+      <span class="boot__line"><span></span></span>
+      <span class="boot__log ltr" data-boot-log>initializing neural core…</span>
+      <span class="boot__pct ltr"><b data-boot-pct>00</b>%</span>
+    </div>
+  </div>
+
+  <canvas id="world" aria-hidden="true"></canvas>
+  <div class="fx-vignette" aria-hidden="true"></div>
+  <div class="fx-scan" aria-hidden="true"></div>
+  <div class="fx-grain" aria-hidden="true"></div>
+  <div class="cursor" aria-hidden="true"><span class="cursor__dot"></span><span class="cursor__ring"><em></em></span></div>
+
+  <!-- header -->
+  <header class="top">
+    <a class="brand" href="#hero" data-nav aria-label="AETHER — לעמוד הבית">
+      <span class="brand__glyph" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="brand__name ltr">AETHER</span>
+    </a>
+    <nav class="top__nav" aria-label="ניווט ראשי">
+      <a href="#services" data-nav>שירותים</a>
+      <a href="#agents" data-nav>סוכני AI</a>
+      <a href="#portfolio" data-nav>עבודות</a>
+      <a href="#process" data-nav>תהליך</a>
+      <a href="#showcase" data-nav>מעבדה</a>
+    </nav>
+    <a class="top__cta" href="#contact" data-nav data-cursor="יאללה"><span>בואו נדבר</span><i aria-hidden="true"></i></a>
+  </header>
+
+  <!-- HUD -->
+  <aside class="hud" aria-hidden="true">
+    <div class="hud__coords ltr"><span>X <b data-hud-x>0.00</b></span><span>Y <b data-hud-y>0.00</b></span><span>Z <b data-hud-z>0.00</b></span></div>
+    <div class="hud__track"><span data-hud-fill></span></div>
+    <div class="hud__chapter"><b class="ltr" data-hud-num>01</b><span data-hud-name>ליבה</span></div>
+  </aside>
+
+  <main>
+    <!-- 01 HERO -->
+    <section class="ch hero" id="hero" data-scene="hero" data-name="ליבה">
+      <div class="hero__inner">
+        <p class="kicker reveal"><span class="ltr">[01]</span> סטודיו לבינה מלאכותית ופיתוח ווב</p>
+        <h1 class="hero__title" data-split>
+          <span class="line">אנחנו בונים</span>
+          <span class="line">את האינטרנט</span>
+          <span class="line line--glow">שחושב.</span>
+        </h1>
+        <p class="hero__lede reveal">סוכני AI שעובדים בשבילכם, אתרים שמרגישים כמו עולם, ואוטומציות שמחזירות לכם את הזמן. הכל נבנה מאפס — בשבילכם בלבד.</p>
+        <div class="hero__actions reveal">
+          <a class="btn btn--primary" href="#contact" data-nav data-cursor="קדימה"><span>מתחילים פרויקט</span></a>
+          <a class="btn btn--line" href="#portfolio" data-nav><span>לעבודות שלנו</span></a>
+        </div>
+      </div>
+      <ul class="hero__ticker reveal" aria-label="תחומי התמחות">
+        <li>סוכני AI</li><li>אתרים תלת־ממדיים</li><li>אוטומציה עסקית</li><li>מוצרי SaaS</li><li>חוויות WebGL</li>
+      </ul>
+      <p class="hero__hint" aria-hidden="true"><span class="ltr">SCROLL</span><i></i>גללו כדי להיכנס לעולם</p>
+    </section>
+
+    <!-- 02 SERVICES -->
+    <section class="ch services" id="services" data-scene="services" data-name="שירותים">
+      <div class="pin">
+        <div class="col">
+          <p class="kicker"><span class="ltr">[02]</span> מה אנחנו בונים</p>
+          <h2 class="h2" data-split><span class="line">שלוש יכולות.</span><span class="line line--glow">מערכת אחת.</span></h2>
+          <ol class="svc" data-svc>
+            <li data-i="0">
+              <span class="svc__n ltr">01</span>
+              <h3>סוכני AI</h3>
+              <p>עובדים דיגיטליים שעונים ללקוחות, מסננים לידים ומבצעים משימות — 24/7, בעברית, בטון של המותג שלכם.</p>
+              <span class="svc__tags"><i>LLM</i><i>RAG</i><i>WhatsApp</i><i>Voice</i></span>
+            </li>
+            <li data-i="1">
+              <span class="svc__n ltr">02</span>
+              <h3>אתרים בהתאמה אישית</h3>
+              <p>אתרי תדמית, חנויות ומערכות ווב שנבנים מאפס: מהירים, חכמים, תלת־ממדיים כשצריך — ותמיד ממוקדי המרה.</p>
+              <span class="svc__tags"><i>WebGL</i><i>Next.js</i><i>Headless</i><i>SEO</i></span>
+            </li>
+            <li data-i="2">
+              <span class="svc__n ltr">03</span>
+              <h3>אוטומציה עסקית</h3>
+              <p>מחברים CRM, מייל, וואטסאפ ומערכות פנימיות לזרימה אחת חכמה. בלי העתק־הדבק, בלי טעויות, בלי לחכות.</p>
+              <span class="svc__tags"><i>n8n</i><i>Make</i><i>API</i><i>Webhooks</i></span>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 AGENTS -->
+    <section class="ch agents" id="agents" data-scene="agents" data-name="סוכנים">
+      <div class="pin">
+        <div class="col col--wide">
+          <p class="kicker"><span class="ltr">[03]</span> צוות שלא ישן</p>
+          <h2 class="h2" data-split><span class="line">הכירו את</span><span class="line line--glow">הסוכנים שלכם.</span></h2>
+          <div class="agents__grid">
+            <ul class="roster" data-roster>
+              <li data-i="0"><button type="button"><span class="roster__dot"></span><b>נועה</b><span>סוכנת מכירות</span><em class="ltr">SALES · 01</em></button></li>
+              <li data-i="1"><button type="button"><span class="roster__dot"></span><b>אריאל</b><span>סוכן שירות לקוחות</span><em class="ltr">SUPPORT · 02</em></button></li>
+              <li data-i="2"><button type="button"><span class="roster__dot"></span><b>מאיה</b><span>סוכנת תפעול</span><em class="ltr">OPS · 03</em></button></li>
+              <li data-i="3"><button type="button"><span class="roster__dot"></span><b>תום</b><span>סוכן תוכן</span><em class="ltr">CONTENT · 04</em></button></li>
+            </ul>
+            <div class="term" aria-live="polite">
+              <div class="term__bar"><i></i><i></i><i></i><span class="ltr" data-term-title>agent://noa.sales</span><span class="term__live">LIVE</span></div>
+              <div class="term__body" data-term></div>
+              <div class="term__meta"><span data-term-role>מסננת לידים, עונה על שאלות וקובעת פגישות ישירות ביומן.</span><span class="ltr" data-term-stat>avg. reply 1.8s</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 PORTFOLIO -->
+    <section class="ch portfolio" id="portfolio" data-scene="portfolio" data-name="עבודות">
+      <div class="pin">
+        <div class="col">
+          <p class="kicker"><span class="ltr">[04]</span> עבודות נבחרות</p>
+          <div class="work" data-work>
+            <div class="work__count ltr"><b data-work-i>01</b> / <span>05</span></div>
+            <h2 class="work__name ltr" data-work-name>LUMIÈRE</h2>
+            <p class="work__tag" data-work-tag>חנות אופנה · Headless Commerce</p>
+            <p class="work__desc" data-work-desc>חוויית קנייה תלת־ממדית עם סוכן סטייליסט מבוסס AI שממליץ על לוקים בזמן אמת.</p>
+            <div class="work__kpi"><b class="ltr" data-work-kpi>+182%</b><span data-work-kpi-t>המרות בשלושה חודשים</span></div>
+          </div>
+          <div class="work__dots" data-work-dots></div>
+          <p class="tip">לחצו על מכשיר כדי לסובב אליו את הגלריה.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 PROCESS -->
+    <section class="ch process" id="process" data-scene="process" data-name="תהליך">
+      <div class="pin">
+        <div class="col">
+          <p class="kicker"><span class="ltr">[05]</span> ארבעה שערים</p>
+          <h2 class="h2 h2--sm" data-split><span class="line">מרעיון</span><span class="line line--glow">למערכת חיה.</span></h2>
+          <ol class="steps" data-steps>
+            <li><span class="ltr">01</span><div><h3>אבחון</h3><p>ממפים תהליכים, מטרות ונקודות כאב. יוצאים עם תוכנית ברורה ומדדי הצלחה.</p></div></li>
+            <li><span class="ltr">02</span><div><h3>ארכיטקטורה</h3><p>מתכננים חוויה, מערכות ומודלים — ובוחרים את הטכנולוגיה הנכונה, לא את האופנתית.</p></div></li>
+            <li><span class="ltr">03</span><div><h3>בנייה</h3><p>פיתוח באיטרציות שבועיות, עם דמו חי כל שבוע. אתם רואים הכל בזמן אמת.</p></div></li>
+            <li><span class="ltr">04</span><div><h3>השקה וצמיחה</h3><p>עולים לאוויר, מנטרים ומשפרים — על בסיס דאטה אמיתי, לא תחושות.</p></div></li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06 BENEFITS -->
+    <section class="ch benefits" id="benefits" data-scene="benefits" data-name="תוצאות">
+      <div class="pin">
+        <div class="col">
+          <p class="kicker"><span class="ltr">[06]</span> למה זה משנה</p>
+          <div class="ben" data-ben>
+            <div class="ben__item" data-i="0"><b class="ltr">24/7</b><h3>זמינות מלאה</h3><p>הסוכנים עונים בשתיים בלילה בדיוק כמו בעשר בבוקר.</p></div>
+            <div class="ben__item" data-i="1"><b class="ltr">−70%</b><h3>פחות עבודה ידנית</h3><p>משימות חוזרות עוברות לאוטומציה, הצוות חוזר לעבודה שחשובה.</p></div>
+            <div class="ben__item" data-i="2"><b class="ltr">&lt;1s</b><h3>טעינה מיידית</h3><p>אתרים שנבנו לביצועים — גם כשהם מלאים בתלת־ממד.</p></div>
+            <div class="ben__item" data-i="3"><b class="ltr">×2.4</b><h3>יותר המרות</h3><p>שיפור ממוצע בהמרות אצל לקוחות בשנה הראשונה.</p></div>
+          </div>
+          <div class="ben__bar" aria-hidden="true"><span data-ben-fill></span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 07 SHOWCASE -->
+    <section class="ch showcase" id="showcase" data-scene="showcase" data-name="מעבדה">
+      <div class="pin">
+        <div class="col">
+          <p class="kicker"><span class="ltr">[07]</span> המעבדה</p>
+          <h2 class="h2 h2--sm" data-split><span class="line">גררו. סובבו.</span><span class="line line--glow">שחקו.</span></h2>
+          <p class="lede">זה לא סרטון — זה WebGL חי שרץ בדפדפן שלכם, באותה טכנולוגיה שאנחנו בונים בה חוויות ללקוחות.</p>
+          <div class="modes" role="group" aria-label="מצב תצוגה" data-modes>
+            <button type="button" aria-pressed="true" data-mode="0"><i></i>ליבה נוזלית</button>
+            <button type="button" aria-pressed="false" data-mode="1"><i></i>זכוכית</button>
+            <button type="button" aria-pressed="false" data-mode="2"><i></i>רשת</button>
+          </div>
+          <p class="tip">גררו את האובייקט כדי לסובב · לחצו ליצירת גל</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 08 CONTACT -->
+    <section class="ch contact" id="contact" data-scene="contact" data-name="פורטל">
+      <div class="contact__inner">
+        <p class="kicker reveal"><span class="ltr">[08]</span> הפורטל פתוח</p>
+        <h2 class="contact__title" data-split><span class="line">יש לכם רעיון?</span><span class="line line--glow">בואו נבנה לו עולם.</span></h2>
+        <form class="form reveal" data-form novalidate>
+          <fieldset class="chips">
+            <legend>מה בונים?</legend>
+            <label><input type="checkbox" name="what" value="סוכן AI" /><span>סוכן AI</span></label>
+            <label><input type="checkbox" name="what" value="אתר" /><span>אתר</span></label>
+            <label><input type="checkbox" name="what" value="אוטומציה" /><span>אוטומציה</span></label>
+            <label><input type="checkbox" name="what" value="הכל" /><span>הכל</span></label>
+          </fieldset>
+          <label class="field"><span>שם</span><input name="name" autocomplete="name" required /></label>
+          <label class="field"><span>אימייל או טלפון</span><input name="reach" autocomplete="email" required /></label>
+          <label class="field field--wide"><span>ספרו לנו בקצרה</span><textarea name="msg" rows="2"></textarea></label>
+          <button class="btn btn--primary form__send" type="submit" data-cursor="שגר"><span>שגרו הודעה</span></button>
+          <p class="form__note" data-note>חוזרים אליכם תוך יום עסקים אחד.</p>
+        </form>
+      </div>
+      <footer class="foot">
+        <div class="foot__brand"><span class="ltr">AETHER</span><p>סטודיו לבינה מלאכותית ופיתוח ווב. תל אביב · עובדים עם לקוחות בכל העולם.</p></div>
+        <nav class="foot__nav" aria-label="קישורים">
+          <a href="#services" data-nav>שירותים</a><a href="#agents" data-nav>סוכני AI</a><a href="#portfolio" data-nav>עבודות</a><a href="#process" data-nav>תהליך</a>
+        </nav>
+        <div class="foot__social ltr"><a href="#" aria-label="Instagram">IG</a><a href="#" aria-label="LinkedIn">IN</a><a href="#" aria-label="Behance">BE</a><a href="mailto:hello@aether.studio">hello@aether.studio</a></div>
+        <p class="foot__legal"><span class="ltr">© <span data-year></span> AETHER STUDIO</span><span>כל הזכויות שמורות</span></p>
+      </footer>
+    </section>
+  </main>
+
+  <noscript><style>.boot{display:none}body.is-loading{overflow:auto}</style></noscript>
+  <script type="module" src="js/main.js?v=1"></script>
+</body>
+</html>
