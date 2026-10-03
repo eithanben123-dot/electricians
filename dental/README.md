@@ -11,9 +11,9 @@ Le contenu vient du site actuel (davidsiarri.com/he) : biographie et diplômes, 
 - **Avant / après** : 3 simulations rendues dans le navigateur (blanchiment, facettes, restauration sans métal), marquées « הדמיה ».
 
 ## À compléter (absent du site source)
-- Adresse exacte, horaires, e-mail (footer, pages légales, JSON-LD).
+- Horaires et e-mail (adresse, accès et coordonnées GPS : faits).
 - Photo d'Enzo (pour l'instant un portrait stylisé).
-- Avis Google / témoignages : à ajouter uniquement à partir de vrais avis.
+- Avis : 3 avis vérifiés (WhatClinic, 5.0) traduits de l'anglais + bouton vers les avis Google. Remplacer par des avis Google réels si souhaité.
 - `FORM_ENDPOINT` dans `js/app.js` (sinon le formulaire ouvre WhatsApp, numéro `WHATSAPP`).
 - Vérifier que le 052-532-6620 est bien joignable sur WhatsApp.
 

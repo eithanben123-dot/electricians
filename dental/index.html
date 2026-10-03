@@ -18,7 +18,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&family=Assistant:wght@300;400;500;600;700&family=Dancing+Script:wght@600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="vendor/lenis/lenis.css" />
-  <link rel="stylesheet" href="css/style.css?v=3" />
+  <link rel="stylesheet" href="css/style.css?v=4" />
   <script type="importmap">
     { "imports": { "three": "./vendor/three/three.module.js", "three/addons/": "./vendor/three/addons/" } }
   </script>
@@ -30,7 +30,9 @@
     "alternateName": "ד״ר דוד סיארי — רופא שיניים מנתח",
     "url": "https://www.davidsiarri.com/he",
     "telephone": "+972-52-532-6620",
-    "address": { "@type": "PostalAddress", "addressLocality": "הרצליה פיתוח", "addressCountry": "IL" },
+    "address": { "@type": "PostalAddress", "streetAddress": "משכית 22, בית לומיר, קומה 2", "addressLocality": "הרצליה פיתוח", "addressCountry": "IL" },
+    "geo": { "@type": "GeoCoordinates", "latitude": 32.1638553, "longitude": 34.8104321 },
+    "hasMap": "https://www.google.com/maps/place/?q=place_id:0x151d488ce568e70d:0xb1c0a20391406e1d",
     "availableLanguage": ["he", "fr", "en"],
     "medicalSpecialty": ["Dentistry", "Prosthodontics", "Periodontics"],
     "employee": { "@type": "Person", "name": "Dr David Siarri", "jobTitle": "רופא שיניים מנתח", "alumniOf": ["Université de Paris", "Hôpital Cochin", "New York University"] }
@@ -148,6 +150,35 @@
             <p>היחסים עם המטופלים הם הלב של המרפאה שלנו. כל מי שמגיע אלינו לייעוץ מתקבל בברכה, בתשומת לב ובהתחשבות מלאה.</p>
             <p>בכל גיל ובכל מצב, תקבלו את הצעות הטיפול הטובות ביותר עבורכם. המטרה שלנו היא לשפר את איכות החיים של המטופלים שלנו — ולהעניק להם את המיטב למען הבריאות, הנוחות, היופי והביטחון העצמי שלהם.</p>
           </div>
+        </div>
+
+        <!-- Verified reviews (WhatClinic, 5.0 from 3 reviews) — swap in Google reviews when available -->
+        <div class="greviews" id="reviews" data-reveal>
+          <div class="greviews__head">
+            <div class="greviews__score">
+              <h2 class="care__title">מה אומרים המטופלים</h2>
+              <span class="stars" aria-hidden="true"><svg><use href="#i-star" /></svg><svg><use href="#i-star" /></svg><svg><use href="#i-star" /></svg><svg><use href="#i-star" /></svg><svg><use href="#i-star" /></svg></span>
+              <span class="greviews__count">ביקורות מאומתות</span>
+            </div>
+            <a class="btn btn--ghost btn--sm" href="https://www.google.com/maps/place/Dr.+David+Siarri+-+DenTech+Cares+-+Dentist/@32.1638553,34.8104321,17z/data=!4m8!3m7!1s0x151d488ce568e70d:0xb1c0a20391406e1d!8m2!3d32.1638553!4d34.8104321!9m1!1b1" target="_blank" rel="noopener"><span class="g-word" aria-hidden="true"><i>G</i><i>o</i><i>o</i><i>g</i><i>l</i><i>e</i></span><span>לכל הביקורות בגוגל</span></a>
+          </div>
+          <ul class="greviews__list">
+            <li class="grev">
+              <header><span class="avatar avatar--ico" aria-hidden="true"><svg><use href="#i-user" /></svg></span><div><b>מטופל/ת מאומת/ת</b><span>WhatClinic · תורגם מאנגלית</span></div></header>
+              <span class="stars" aria-label="5 מתוך 5 כוכבים"><svg><use href="#i-star" /></svg><svg><use href="#i-star" /></svg><svg><use href="#i-star" /></svg><svg><use href="#i-star" /></svg><svg><use href="#i-star" /></svg></span>
+              <p>ד״ר סיארי רופא שיניים מצוין, ונעים מאוד.</p>
+            </li>
+            <li class="grev">
+              <header><span class="avatar avatar--ico" aria-hidden="true"><svg><use href="#i-user" /></svg></span><div><b>מטופל/ת מאומת/ת</b><span>WhatClinic · תורגם מאנגלית</span></div></header>
+              <span class="stars" aria-label="5 מתוך 5 כוכבים"><svg><use href="#i-star" /></svg><svg><use href="#i-star" /></svg><svg><use href="#i-star" /></svg><svg><use href="#i-star" /></svg><svg><use href="#i-star" /></svg></span>
+              <p>רופא שיניים מדהים — חברותי, נעים ומעל הכול מקצועי. הביקור אצל רופא השיניים הפך לחוויה נעימה.</p>
+            </li>
+            <li class="grev">
+              <header><span class="avatar avatar--ico" aria-hidden="true"><svg><use href="#i-user" /></svg></span><div><b>מטופל/ת מאומת/ת</b><span>WhatClinic · תורגם מאנגלית</span></div></header>
+              <span class="stars" aria-label="5 מתוך 5 כוכבים"><svg><use href="#i-star" /></svg><svg><use href="#i-star" /></svg><svg><use href="#i-star" /></svg><svg><use href="#i-star" /></svg><svg><use href="#i-star" /></svg></span>
+              <p>רופא חברותי, אכפתי ומקצועי מאוד. גורם לך להרגיש בנוח לגמרי — ובאמת כמעט לא מרגישים כאב.</p>
+            </li>
+          </ul>
         </div>
       </div>
     </section>
@@ -330,7 +361,20 @@
           <p class="book__lede">השאירו פרטים ונציג מהמרפאה יחזור אליכם לתיאום ייעוץ.</p>
           <div class="book__quick">
             <a class="quick" href="https://wa.me/972525326620?text=%D7%A9%D7%9C%D7%95%D7%9D%2C%20%D7%90%D7%A0%D7%99%20%D7%9E%D7%A2%D7%95%D7%A0%D7%99%D7%99%D7%9F%2F%D7%AA%20%D7%9C%D7%A7%D7%91%D7%95%D7%A2%20%D7%AA%D7%95%D7%A8" target="_blank" rel="noopener"><span class="quick__ico quick__ico--wa"><svg aria-hidden="true"><use href="#i-wa" /></svg></span><span><b>וואטסאפ</b><small>מענה מהיר</small></span></a>
-            <a class="quick" href="tel:+972525326620"><span class="quick__ico"><svg aria-hidden="true"><use href="#i-phone" /></svg></span><span><b class="ltr">052-532-6620</b><small>הרצליה פיתוח</small></span></a>
+            <a class="quick" href="tel:+972525326620"><span class="quick__ico"><svg aria-hidden="true"><use href="#i-phone" /></svg></span><span><b class="ltr">052-532-6620</b><small>משכית 22, הרצליה פיתוח</small></span></a>
+          </div>
+          <div class="visit">
+            <h3><svg aria-hidden="true"><use href="#i-pin" /></svg>איך להגיע אלינו</h3>
+            <address>משכית 22, בית לומיר — כניסה צפונית, קומה 2<br />הרצליה פיתוח</address>
+            <ul class="visit__list">
+              <li><b>חנייה</b><span>מול הבניין</span></li>
+              <li><b>רכבת</b><span>10 דקות הליכה מתחנת הרצליה</span></li>
+              <li><b>אוטובוסים</b><span class="ltr">11 · 12 · 13 · 14 · 27 · 29 · 30 · 39 · 90</span></li>
+            </ul>
+            <div class="visit__go">
+              <a class="btn btn--sm visit__btn" href="https://waze.com/ul?ll=32.1638553,34.8104321&amp;navigate=yes" target="_blank" rel="noopener">ניווט ב־Waze</a>
+              <a class="btn btn--sm visit__btn" href="https://www.google.com/maps/dir/?api=1&amp;destination=32.1638553,34.8104321" target="_blank" rel="noopener">Google Maps</a>
+            </div>
           </div>
           <ul class="book__assure"><li><svg aria-hidden="true"><use href="#i-check" /></svg>חוזרים אליכם בהקדם</li><li><svg aria-hidden="true"><use href="#i-check" /></svg>עברית · Français · English</li><li><svg aria-hidden="true"><use href="#i-check" /></svg>הפרטים שלכם נשמרים בסודיות</li></ul>
         </div>
@@ -367,7 +411,7 @@
       <nav aria-label="טיפולים"><h3>טיפולים</h3><a href="#services">השתלות שיניים</a><a href="#crown">כתר ביום אחד</a><a href="#services">חזיתות חרסינה</a><a href="#services">כתרים מזירקוניה</a><a href="#services">רפואה אסתטית</a></nav>
       <div class="foot__contact">
         <h3>צור קשר</h3>
-        <p><svg aria-hidden="true"><use href="#i-pin" /></svg>הרצליה פיתוח</p>
+        <p><svg aria-hidden="true"><use href="#i-pin" /></svg><a href="https://waze.com/ul?ll=32.1638553,34.8104321&amp;navigate=yes" target="_blank" rel="noopener">משכית 22, בית לומיר, קומה 2, הרצליה פיתוח</a></p>
         <p><svg aria-hidden="true"><use href="#i-phone" /></svg><a href="tel:+972525326620" class="ltr">052-532-6620</a></p>
         <p><svg aria-hidden="true"><use href="#i-wa" /></svg><a href="https://wa.me/972525326620" target="_blank" rel="noopener">וואטסאפ</a></p>
         <p><svg aria-hidden="true"><use href="#i-globe" /></svg><span>עברית · Français · English</span></p>
