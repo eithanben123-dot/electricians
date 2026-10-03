@@ -267,7 +267,7 @@ export function renderSmiles({ width = 1200, height = 800 } = {}) {
   const variants = [
     { key: 'whitening', before: { tint: '#d9bf86', rough: 0.42 }, after: {} },
     { key: 'veneers', before: { tint: '#e4d6bb', rough: 0.36, uneven: true }, after: {} },
-    { key: 'ortho', before: { crowd: true }, after: {} },
+    { key: 'metalfree', before: { grey: true }, after: {} },
   ];
   const out = [];
   const seeded = (seed) => { let s = seed; return () => { s = (s * 16807) % 2147483647; return s / 2147483647; }; };
@@ -294,6 +294,7 @@ export function renderSmiles({ width = 1200, height = 800 } = {}) {
         t.mesh.position.x *= 1.04;                                          // small diastemas
         if (t.index === 1 && t.side === 1) t.mesh.userData.crown.material = greyMat;   // one discoloured tooth
       }
+      if (cfg.grey && ai === 0 && (t.index <= 1 || (t.index === 3 && t.side === -1))) t.mesh.userData.crown.material = greyMat;   // old, darkened crowns
       if (cfg.crowd && front) {
         t.mesh.rotation.y += (rand() - 0.5) * 1.3;
         t.mesh.position.z += (rand() - 0.5) * 0.7;
