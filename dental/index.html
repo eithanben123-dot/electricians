@@ -18,7 +18,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&family=Assistant:wght@300;400;500;600;700&family=Dancing+Script:wght@600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="vendor/lenis/lenis.css" />
-  <link rel="stylesheet" href="css/style.css?v=4" />
+  <link rel="stylesheet" href="css/style.css?v=6" />
   <script type="importmap">
     { "imports": { "three": "./vendor/three/three.module.js", "three/addons/": "./vendor/three/addons/" } }
   </script>
@@ -31,6 +31,7 @@
     "url": "https://www.davidsiarri.com/he",
     "telephone": "+972-52-532-6620",
     "address": { "@type": "PostalAddress", "streetAddress": "משכית 22, בית לומיר, קומה 2", "addressLocality": "הרצליה פיתוח", "addressCountry": "IL" },
+    "openingHoursSpecification": [ { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"], "opens": "08:00", "closes": "17:00" } ],
     "geo": { "@type": "GeoCoordinates", "latitude": 32.1638553, "longitude": 34.8104321 },
     "hasMap": "https://www.google.com/maps/place/?q=place_id:0x151d488ce568e70d:0xb1c0a20391406e1d",
     "availableLanguage": ["he", "fr", "en"],
@@ -358,7 +359,7 @@
         <div class="book__copy" data-reveal>
           <p class="eyebrow eyebrow--light">צור קשר</p>
           <h2 id="book-title" class="h2 h2--light">הגיע הזמן לחייך <em>בביטחון.</em></h2>
-          <p class="book__lede">השאירו פרטים ונציג מהמרפאה יחזור אליכם לתיאום ייעוץ.</p>
+          <p class="book__lede">בחרו טיפול, יום ושעה — ונחזור אליכם לאישור התור. מעדיפים לדבר? אנחנו כאן בטלפון ובוואטסאפ.</p>
           <div class="book__quick">
             <a class="quick" href="https://wa.me/972525326620?text=%D7%A9%D7%9C%D7%95%D7%9D%2C%20%D7%90%D7%A0%D7%99%20%D7%9E%D7%A2%D7%95%D7%A0%D7%99%D7%99%D7%9F%2F%D7%AA%20%D7%9C%D7%A7%D7%91%D7%95%D7%A2%20%D7%AA%D7%95%D7%A8" target="_blank" rel="noopener"><span class="quick__ico quick__ico--wa"><svg aria-hidden="true"><use href="#i-wa" /></svg></span><span><b>וואטסאפ</b><small>מענה מהיר</small></span></a>
             <a class="quick" href="tel:+972525326620"><span class="quick__ico"><svg aria-hidden="true"><use href="#i-phone" /></svg></span><span><b class="ltr">052-532-6620</b><small>משכית 22, הרצליה פיתוח</small></span></a>
@@ -367,6 +368,7 @@
             <h3><svg aria-hidden="true"><use href="#i-pin" /></svg>איך להגיע אלינו</h3>
             <address>משכית 22, בית לומיר — כניסה צפונית, קומה 2<br />הרצליה פיתוח</address>
             <ul class="visit__list">
+              <li><b>שעות</b><span>א׳–ה׳ <span class="ltr">08:00–17:00</span></span></li>
               <li><b>חנייה</b><span>מול הבניין</span></li>
               <li><b>רכבת</b><span>10 דקות הליכה מתחנת הרצליה</span></li>
               <li><b>אוטובוסים</b><span class="ltr">11 · 12 · 13 · 14 · 27 · 29 · 30 · 39 · 90</span></li>
@@ -378,24 +380,59 @@
           </div>
           <ul class="book__assure"><li><svg aria-hidden="true"><use href="#i-check" /></svg>חוזרים אליכם בהקדם</li><li><svg aria-hidden="true"><use href="#i-check" /></svg>עברית · Français · English</li><li><svg aria-hidden="true"><use href="#i-check" /></svg>הפרטים שלכם נשמרים בסודיות</li></ul>
         </div>
-        <form class="form" data-form novalidate data-reveal>
-          <div class="form__row">
-            <label class="field"><span>שם מלא</span><input name="name" autocomplete="name" required /></label>
-            <label class="field"><span>טלפון</span><input name="phone" type="tel" inputmode="tel" autocomplete="tel" required dir="ltr" /></label>
+        <div class="booking" data-booking data-reveal>
+          <ol class="booking__crumbs" aria-label="שלבי קביעת התור">
+            <li><button type="button" data-crumb><span>1</span>טיפול</button></li>
+            <li><button type="button" data-crumb><span>2</span>מועד</button></li>
+            <li><button type="button" data-crumb><span>3</span>פרטים</button></li>
+          </ol>
+
+          <div class="booking__pane" data-pane="0">
+            <h3 tabindex="-1">מה תרצו לקבוע?</h3>
+            <div class="bk-chips" role="radiogroup" aria-label="סוג טיפול" data-bk-treat></div>
           </div>
-          <label class="field"><span>סוג טיפול</span>
-            <select name="treatment" data-treatment>
-              <option value="">בחירת טיפול (לא חובה)</option>
-              <option>השתלות שיניים</option><option>כתר ביום אחד</option><option>חזיתות חרסינה</option><option>כתרים וגשרים מזירקוניה</option>
-              <option>הלבנת שיניים</option><option>טיפולי חניכיים</option><option>כירורגיה דנטלית</option><option>רפואה אסתטית</option>
-              <option>ייעוץ</option><option>בדיקה כללית</option>
-            </select>
-          </label>
-          <label class="field"><span>הודעה</span><textarea name="msg" rows="3" placeholder="ספרו לנו בקצרה במה נוכל לעזור"></textarea></label>
-          <label class="consent"><input type="checkbox" name="consent" required /><span>אני מאשר/ת שהמרפאה תיצור איתי קשר בנוגע לפנייה. <a href="privacy.html">מדיניות פרטיות</a></span></label>
-          <button class="btn btn--primary btn--block" type="submit"><span>אני רוצה לקבוע תור</span><svg aria-hidden="true"><use href="#i-arrow" /></svg></button>
-          <p class="form__msg" role="status" aria-live="polite" data-form-msg></p>
-        </form>
+
+          <div class="booking__pane" data-pane="1" hidden>
+            <h3 tabindex="-1">בחרו יום ושעה</h3>
+            <p class="bk-sum" data-bk-sum></p>
+            <div class="bk-days" role="listbox" aria-label="בחירת יום" data-bk-days></div>
+            <p class="bk-daylabel" data-bk-day-label></p>
+            <div class="bk-times" role="radiogroup" aria-label="בחירת שעה" data-bk-times></div>
+            <div class="booking__nav">
+              <button class="btn btn--ghost btn--sm" type="button" data-bk-back>חזרה</button>
+              <button class="btn btn--primary" type="button" data-bk-next disabled><span>המשך לפרטים</span><svg aria-hidden="true"><use href="#i-arrow" /></svg></button>
+            </div>
+          </div>
+
+          <form class="booking__pane form" data-pane="2" data-bk-form novalidate hidden>
+            <h3 tabindex="-1">כמעט סיימנו</h3>
+            <p class="bk-sum" data-bk-sum></p>
+            <div class="form__row">
+              <label class="field"><span>שם מלא</span><input name="name" autocomplete="name" required /></label>
+              <label class="field"><span>טלפון</span><input name="phone" type="tel" inputmode="tel" autocomplete="tel" required dir="ltr" /></label>
+            </div>
+            <label class="field"><span>הודעה (לא חובה)</span><textarea name="msg" rows="2" placeholder="משהו שחשוב שנדע לפני הביקור?"></textarea></label>
+            <label class="consent"><input type="checkbox" name="consent" required /><span>אני מאשר/ת שהמרפאה תיצור איתי קשר לאישור התור. <a href="privacy.html">מדיניות פרטיות</a></span></label>
+            <div class="booking__nav">
+              <button class="btn btn--ghost btn--sm" type="button" data-bk-back>חזרה</button>
+              <button class="btn btn--primary" type="submit"><span>אני רוצה לקבוע תור</span><svg aria-hidden="true"><use href="#i-arrow" /></svg></button>
+            </div>
+            <p class="form__msg" role="status" aria-live="polite" data-bk-msg></p>
+          </form>
+
+          <div class="booking__pane booking__done" data-pane="3" hidden>
+            <span class="booking__check" aria-hidden="true"><svg><use href="#i-check" /></svg></span>
+            <h3 tabindex="-1">תודה, <span data-bk-done-name></span>!</h3>
+            <p class="bk-sum" data-bk-sum></p>
+            <p>בקשת התור נשלחה למרפאה. ניצור איתך קשר לאישור סופי של המועד.</p>
+            <div class="booking__nav booking__nav--col">
+              <a class="btn btn--primary btn--block" href="#" target="_blank" rel="noopener" data-bk-wa><svg aria-hidden="true"><use href="#i-wa" /></svg><span>שליחת הבקשה בוואטסאפ</span></a>
+              <a class="btn btn--ghost btn--block" href="#" data-bk-ics><span>הוספה ליומן</span></a>
+              <button class="link" type="button" data-bk-restart>קביעת תור נוסף</button>
+            </div>
+          </div>
+          <p class="booking__note">ימים א׳–ה׳ · <span class="ltr">08:00–17:00</span> · התור ייקבע סופית לאחר אישור המרפאה</p>
+        </div>
       </div>
     </section>
   </main>
@@ -414,6 +451,7 @@
         <p><svg aria-hidden="true"><use href="#i-pin" /></svg><a href="https://waze.com/ul?ll=32.1638553,34.8104321&amp;navigate=yes" target="_blank" rel="noopener">משכית 22, בית לומיר, קומה 2, הרצליה פיתוח</a></p>
         <p><svg aria-hidden="true"><use href="#i-phone" /></svg><a href="tel:+972525326620" class="ltr">052-532-6620</a></p>
         <p><svg aria-hidden="true"><use href="#i-wa" /></svg><a href="https://wa.me/972525326620" target="_blank" rel="noopener">וואטסאפ</a></p>
+        <p><svg aria-hidden="true"><use href="#i-clock" /></svg><span>א׳–ה׳ <span class="ltr">08:00–17:00</span></span></p>
         <p><svg aria-hidden="true"><use href="#i-globe" /></svg><span>עברית · Français · English</span></p>
       </div>
     </div>
@@ -446,6 +484,6 @@
 
   <script src="vendor/gsap/gsap.min.js" defer></script>
   <script src="vendor/gsap/ScrollTrigger.min.js" defer></script>
-  <script type="module" src="js/app.js?v=2"></script>
+  <script type="module" src="js/app.js?v=3"></script>
 </body>
 </html>

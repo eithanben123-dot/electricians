@@ -4,10 +4,8 @@
  */
 import Lenis from '../vendor/lenis/lenis.mjs';
 
-/* ← Connect the form to the clinic's CRM / email service by setting an endpoint
-   that accepts a JSON POST. While empty, submissions are handed to WhatsApp. */
-const FORM_ENDPOINT = '';
-const WHATSAPP = '972525326620';
+/* Booking settings (hours, WhatsApp, optional server endpoint) live in js/booking.js */
+let booking = null;
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -187,9 +185,7 @@ addEventListener('keydown', (e) => {
 });
 $('[data-modal-book]').addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); const t = modalService; closeModal(); setTreatment(t); scrollToEl(book); });
 function setTreatment(name) {
-  const sel = $('[data-treatment]');
-  const opt = [...sel.options].find((o) => o.text === name);
-  if (opt) sel.value = opt.value || opt.text;
+  booking?.select(name === 'ייעוץ' ? 'ייעוץ ובדיקה' : name);
 }
 
 /* ------------------------------------------------------------------ before / after */
@@ -253,35 +249,8 @@ $$('.acc__item').forEach((d) => {
   });
 });
 
-/* ------------------------------------------------------------------ form */
-const form = $('[data-form]'), msg = $('[data-form-msg]');
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const fd = new FormData(form);
-  const name = (fd.get('name') || '').trim();
-  const phone = (fd.get('phone') || '').replace(/[^\d+]/g, '');
-  const okPhone = /^(\+?972|0)(5\d|[2-489]|7\d)\d{7}$/.test(phone);
-  $$('.field', form).forEach((f) => f.classList.remove('is-invalid'));
-  if (!name) $('[name="name"]', form).closest('.field').classList.add('is-invalid');
-  if (!okPhone) $('[name="phone"]', form).closest('.field').classList.add('is-invalid');
-  if (!name || !okPhone) { msg.className = 'form__msg is-err'; msg.textContent = 'נא למלא שם ומספר טלפון תקין.'; return; }
-  if (!fd.get('consent')) { msg.className = 'form__msg is-err'; msg.textContent = 'נא לאשר יצירת קשר כדי שנוכל לחזור אליך.'; return; }
-  const data = { name, phone, treatment: fd.get('treatment') || '', message: (fd.get('msg') || '').trim() };
-  const btn = $('button[type="submit"]', form); btn.disabled = true;
-  try {
-    if (FORM_ENDPOINT) {
-      const r = await fetch(FORM_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
-      if (!r.ok) throw new Error(r.status);
-      msg.className = 'form__msg is-ok'; msg.textContent = `תודה ${name}! קיבלנו את הפרטים ונחזור אליך בהקדם.`;
-      form.reset();
-    } else {
-      const text = `שלום, אני ${name} (${phone}).${data.treatment ? `\nמעוניין/ת ב: ${data.treatment}` : ''}${data.message ? `\n${data.message}` : ''}`;
-      window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
-      msg.className = 'form__msg is-ok'; msg.textContent = `תודה ${name}! פתחנו לך הודעה מוכנה בוואטסאפ — רק לשלוח.`;
-    }
-  } catch {
-    msg.className = 'form__msg is-err'; msg.textContent = 'משהו השתבש. אפשר להתקשר אלינו: 052-532-6620';
-  } finally { btn.disabled = false; }
-});
+/* ------------------------------------------------------------------ online booking */
+const { createBooking } = await import('./booking.js');
+booking = createBooking($('[data-booking]'));
 
 window.__alma = { lenis, scene, ScrollTrigger };
