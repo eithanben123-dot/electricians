@@ -149,7 +149,7 @@ export function createDentalScene(canvas, { mobile = false, reduced = false } = 
     viewW = viewH * camera.aspect;
   }
   /** desktop: subject sits in the left half (copy is on the right, RTL); portrait: centred, upper area */
-  const PORTRAIT = { hero: { y: 2.5, s: 0.6 }, implant: { y: 1.95, s: 0.56 }, arch: { y: 2.35, s: 0.82 } };
+  const PORTRAIT = { hero: { y: 1.35, s: 0.82 }, implant: { y: 1.95, s: 0.56 }, arch: { y: 2.35, s: 0.82 } };
   const slot = (stage = 'hero') => portrait() ? { x: 0, ...PORTRAIT[stage] } : { x: -viewW * 0.21, y: 0, s: 1 };
 
   /* ------------------------------------------------------------ anchors → screen */
