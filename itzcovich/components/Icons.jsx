@@ -1,0 +1,11 @@
+const base = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.6, strokeLinecap: 'round', strokeLinejoin: 'round', viewBox: '0 0 24 24', 'aria-hidden': true };
+export const Arrow = (p) => (<svg {...base} {...p}><path d="M19 12H5M11 6l-6 6 6 6" /></svg>);
+export const External = (p) => (<svg {...base} {...p}><path d="M9 5H5v14h14v-4M13 5h6v6M19 5l-9 9" /></svg>);
+export const Phone = (p) => (<svg {...base} {...p}><path d="M6.6 3.5h2.6l1.4 4.2-2 1.3a12.4 12.4 0 0 0 6.4 6.4l1.3-2 4.2 1.4v2.6c0 1.2-1 2.1-2.2 2C10.3 19 5 13.7 4.5 5.7c-.1-1.2.8-2.2 2.1-2.2z" /></svg>);
+export const WhatsApp = (p) => (<svg {...base} {...p}><path d="M12 3a9 9 0 0 0-7.8 13.5L3 21l4.6-1.2A9 9 0 1 0 12 3z" /><path d="M9 8.3c.2-.4.5-.4.8-.4h.5c.2 0 .4.1.5.4l.7 1.7c.1.2 0 .5-.1.6l-.5.6c.6 1.2 1.6 2.2 2.8 2.8l.6-.5c.2-.2.4-.2.6-.1l1.7.7c.3.1.4.3.4.5v.5c0 .3 0 .6-.4.8-.6.4-1.4.6-2.3.3-2.5-.8-4.5-2.8-5.3-5.3-.2-.9 0-1.7.4-2.3z" /></svg>);
+export const Mail = (p) => (<svg {...base} {...p}><rect x="3.5" y="5.5" width="17" height="13" rx="1.5" /><path d="M4 7l8 6 8-6" /></svg>);
+export const Pin = (p) => (<svg {...base} {...p}><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z" /><circle cx="12" cy="9.5" r="2.5" /></svg>);
+export const Play = (p) => (<svg viewBox="0 0 24 24" aria-hidden="true" {...p}><path d="M8 5.5v13l11-6.5z" fill="currentColor" /></svg>);
+export const Menu = (p) => (<svg {...base} {...p}><path d="M4 8h16M4 16h16" /></svg>);
+export const Close = (p) => (<svg {...base} {...p}><path d="M6 6l12 12M18 6L6 18" /></svg>);
+export const Facebook = (p) => (<svg {...base} {...p}><path d="M14 8.5h2.5V5H14c-2 0-3.5 1.6-3.5 3.6V11H8v3.4h2.5V21H14v-6.6h2.4l.6-3.4h-3V9.2c0-.4.3-.7.7-.7z" /></svg>);
