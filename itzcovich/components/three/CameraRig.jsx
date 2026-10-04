@@ -10,7 +10,6 @@ import { useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { scroll } from '@/lib/scroll';
-import { AREAS } from '@/lib/data';
 import { cityWorld } from './SharonMap';
 
 export const TOWER = new THREE.Vector3(110, 0, 0);
@@ -21,7 +20,8 @@ export const STAGES = {
   hero:     [{ pos: V(-30, 7.5, 48), look: V(-1, 3, 1), shift: 0.34 }],
   featured: [{ pos: T(40, 10, 70), look: T(0, 16, 0), shift: 0.34 }, { pos: T(34, 30, 60), look: T(0, 28, 0), shift: 0.34 }, { pos: T(24, 52, 40), look: T(-2, 42, 2), shift: 0.34 }],
   services: [{ pos: V(18, 3.2, 30), look: V(1, 1.4, 9), shift: 0.32 }, { pos: V(-10, 2.8, 31), look: V(1, 1.6, 8), shift: 0.32 }],
-  areas:    () => AREAS.map((_, i) => { const c = cityWorld(i); return { pos: c.clone().add(V(3, 10.5, 13)), look: c.clone().add(V(0, 0.8, 0)), shift: 0.28 }; }),
+  // one stop that follows the city the visitor picked (hover / tap), not the scroll position
+  areas:    () => { const c = cityWorld(scroll.activeArea || 0); return [{ pos: c.clone().add(V(3, 10.5, 13)), look: c.clone().add(V(0, 0.8, 0)), shift: 0.28 }]; },
   about:    [{ pos: V(34, 6, 20), look: V(2, 3.2, 1), shift: 0.32 }, { pos: V(30, 9, 26), look: V(2, 3.6, 2), shift: 0.32 }],
   sell:     [{ pos: V(20, 28, 36), look: V(0, 0, 5), shift: 0.3 }, { pos: V(14, 24, 38), look: V(0, 0, 6), shift: 0.3 }],
 };
@@ -67,7 +67,7 @@ export default function CameraRig({ sun }) {
   }
 
   useFrame((state, dt) => {
-    const k = `${scroll.anchors.map((a) => `${a.name}${a.start | 0}`).join()}|${size.width}x${size.height}`;
+    const k = `${scroll.anchors.map((a) => `${a.name}${a.start | 0}`).join()}|${size.width}x${size.height}|${scroll.activeArea}`;
     if (k !== key.current) { key.current = k; path.current = build(); }
     const P = path.current;
     if (!P) return;
@@ -91,7 +91,7 @@ export default function CameraRig({ sun }) {
     // gentle mouse parallax
     if (!scroll.reduced) pos.addScaledVector(tmp.right, scroll.pointer.x * 0.6).addScaledVector(tmp.up, scroll.pointer.y * 0.35);
 
-    const s = scroll.reduced ? 1 : 1 - Math.exp(-dt * 3.2);
+    const s = scroll.reduced ? 1 : 1 - Math.exp(-dt * 2.4);
     cur.current.pos.lerp(pos, s); cur.current.look.lerp(look, s);
     camera.position.copy(cur.current.pos);
     camera.lookAt(cur.current.look);

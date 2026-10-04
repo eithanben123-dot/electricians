@@ -48,8 +48,8 @@ export default function World() {
       <PerformanceMonitor onDecline={() => setQuality('low')} />
       <AdaptiveDpr pixelated={false} />
       <color attach="background" args={['#efe5d3']} />
-      <fog attach="fog" args={['#f0e4cf', 70, 240]} />
-      <Sky distance={4500} sunPosition={[-60, 14, 40]} turbidity={7} rayleigh={1.4} mieCoefficient={0.006} mieDirectionalG={0.86} />
+      <fog attach="fog" args={['#e6e2d6', 90, 260]} />
+      <Sky distance={4500} sunPosition={[-60, 14, 40]} turbidity={4} rayleigh={2.4} mieCoefficient={0.006} mieDirectionalG={0.86} />
       <hemisphereLight args={['#dfe9f5', '#b49f7d', 0.55]} />
       <directionalLight
         ref={sun}

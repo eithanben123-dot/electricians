@@ -1,25 +1,17 @@
 'use client';
-import { useState } from 'react';
 import { AGENCY } from '@/lib/data';
 import { Play, External, Facebook } from '../Icons';
 
-/** Real client testimonial video (YouTube), loaded only when the visitor presses play. */
+/** Real office video on YouTube — opens on YouTube, nothing third-party loads until clicked (thumbnail aside). */
 export default function Testimonials() {
-  const [play, setPlay] = useState(false);
   const v = AGENCY.testimonialVideo;
   return (
-    <section className="voices sheet sheet--paper" id="testimonials" aria-labelledby="voices-title">
+    <section className="voices sheet sheet--teal tone-dark" id="testimonials" aria-labelledby="voices-title">
       <div className="wrap voices__grid">
         <div className="video img-reveal">
-          {play ? (
-            <iframe src={`https://www.youtube-nocookie.com/embed/${v.id}?autoplay=1&rel=0`} title={v.title} allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen />
-          ) : (
-            <>
-              <img src={`https://i.ytimg.com/vi/${v.id}/hqdefault.jpg`} alt="" loading="lazy" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
-              <button className="video__btn" type="button" onClick={() => setPlay(true)} aria-label={`הפעלת הסרטון: ${v.title}`}><span><Play /></span></button>
-              <span className="video__cap">{v.title}</span>
-            </>
-          )}
+          <img src={`https://i.ytimg.com/vi/${v.id}/hqdefault.jpg`} alt="" loading="lazy" onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+          <a className="video__btn" href={`https://www.youtube.com/watch?v=${v.id}`} target="_blank" rel="noopener" aria-label={`צפייה בסרטון ביוטיוב: ${v.title}`}><span><Play /></span></a>
+          <span className="video__cap">{v.title}</span>
         </div>
         <div data-reveal>
           <p className="eyebrow">לקוחות ממליצים</p>

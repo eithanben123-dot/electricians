@@ -5,7 +5,7 @@ export default function Hero() {
   return (
     <section className="hero stage" id="top" data-stage="hero" aria-labelledby="hero-title">
       <div className="hero__inner">
-        <div className="hero__copy">
+        <div className="hero__copy tone-dark glass">
           <p className="eyebrow" data-reveal>{AGENCY.name} · {AGENCY.tagline}</p>
           <h1 id="hero-title" className="display h1" data-reveal>הבית הבא שלכם בשרון.<br /><em>מתחיל בהיכרות.</em></h1>
           <p className="lede" data-reveal>תיווך, ניהול נכסים ונדל״ן מסחרי ברעננה ובכל השרון — עם ניסיון של למעלה מ־20 שנה, דיוק של עולם ההייטק וליווי אישי מהצפייה הראשונה ועד החתימה.</p>
