@@ -18,9 +18,9 @@
   --teal-700: #1d4a4f;
   --teal-500: #3d7c80;
   --gold-soft: #f1e6d0;
-  --display: 'Frank Ruhl Libre', 'David Libre', Georgia, serif;
+  --display: 'Rubik', 'Assistant', system-ui, sans-serif;
   --sans: 'Assistant', 'Heebo', system-ui, sans-serif;
-  --latin: 'Cormorant Garamond', 'Frank Ruhl Libre', Georgia, serif;
+  --latin: 'Rubik', system-ui, sans-serif;
   --ease: cubic-bezier(0.2, 0.7, 0.1, 1);
   --wrap: min(1320px, 100% - clamp(2.4rem, 8vw, 7rem));
   --nav-h: 84px;
@@ -333,7 +333,7 @@ main, .site-footer { position: relative; z-index: 2; }
 
 /* google score */
 .gscore { display: inline-flex; align-items: center; gap: 0.9rem; margin: 0 0 1.4rem; padding: 0.7rem 1.1rem; border: 1px solid var(--line); background: var(--ivory); }
-.gscore b { font-family: 'Cormorant Garamond', serif; font-size: 2.4rem; line-height: 1; font-weight: 500; color: var(--charcoal); }
+.gscore b { font-family: var(--latin); font-size: 2.4rem; line-height: 1; font-weight: 500; color: var(--charcoal); }
 .gscore span { display: grid; font-size: 0.88rem; color: var(--text); }
 .gscore i { font-style: normal; color: var(--gold); letter-spacing: 0.12em; font-size: 1rem; }
 .gscore:hover { border-color: var(--gold); }
@@ -347,7 +347,7 @@ main, .site-footer { position: relative; z-index: 2; }
 .jcard { display: flex; flex-direction: column; height: 100%; padding: 1.6rem 1.4rem 1.8rem; transition: background 0.4s var(--ease); }
 .jcard:hover { background: var(--paper); }
 .jcard__art { width: 92px; height: auto; color: var(--gold); margin-bottom: 1.2rem; opacity: 0.85; }
-.jcard h3 { font-family: 'Frank Ruhl Libre', serif; font-weight: 500; font-size: 1.25rem; line-height: 1.3; margin: 0 0 0.6rem; color: var(--charcoal); }
+.jcard h3 { font-family: var(--display); font-weight: 500; font-size: 1.25rem; line-height: 1.3; margin: 0 0 0.6rem; color: var(--charcoal); }
 .jcard p { margin: 0 0 1.2rem; font-size: 0.95rem; color: var(--text); flex: 1; }
 .jcard__more { display: inline-flex; align-items: center; gap: 0.4rem; font-weight: 600; font-size: 0.88rem; color: var(--gold); }
 .jcard__more svg { width: 1em; height: 1em; }
@@ -357,7 +357,7 @@ main, .site-footer { position: relative; z-index: 2; }
 .faq__grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: clamp(2rem, 6vw, 6rem); align-items: start; }
 .faq__list details { border-top: 1px solid var(--line); }
 .faq__list details:last-child { border-bottom: 1px solid var(--line); }
-.faq__list summary { cursor: pointer; list-style: none; padding: 1.3rem 0; padding-inline-end: 2rem; position: relative; font-family: 'Frank Ruhl Libre', serif; font-size: clamp(1.1rem, 1.5vw, 1.3rem); color: var(--charcoal); }
+.faq__list summary { cursor: pointer; list-style: none; padding: 1.3rem 0; padding-inline-end: 2rem; position: relative; font-family: var(--display); font-size: clamp(1.1rem, 1.5vw, 1.3rem); color: var(--charcoal); }
 .faq__list summary::-webkit-details-marker { display: none; }
 .faq__list summary::after { content: '+'; position: absolute; inset-inline-end: 0; top: 1.1rem; font-size: 1.5rem; color: var(--gold); transition: transform 0.3s var(--ease); }
 .faq__list details[open] summary::after { transform: rotate(45deg); }
@@ -365,7 +365,7 @@ main, .site-footer { position: relative; z-index: 2; }
 .faq__a { padding-bottom: 1.4rem; }
 .faq__a p { margin: 0 0 0.7rem; color: var(--text); max-width: 42rem; }
 .join { margin-top: 2.2rem; padding: 1.6rem; background: var(--charcoal); color: #e9e3d8; }
-.join__k { font-family: 'Frank Ruhl Libre', serif; font-size: 1.4rem; color: #fff; margin: 0 0 0.5rem; }
+.join__k { font-family: var(--display); font-size: 1.4rem; color: #fff; margin: 0 0 0.5rem; }
 .join p { margin: 0 0 1rem; font-size: 0.95rem; }
 .join .link { color: var(--gold); }
 .join .link svg { width: 1.1em; height: 1.1em; }
@@ -485,3 +485,12 @@ main, .site-footer { position: relative; z-index: 2; }
 .video { background: radial-gradient(120% 140% at 80% 10%, var(--teal-500), var(--teal-800) 55%, var(--teal-900)); border: 1px solid rgba(226,192,136,0.35); box-shadow: 0 40px 90px -40px rgba(0,0,0,0.7); }
 .video::after { content: 'איצקוביץ נכסים'; position: absolute; top: 1.2rem; right: 1.4rem; font-family: var(--display); font-size: 1.3rem; color: rgba(255,255,255,0.85); pointer-events: none; }
 .video__btn span { background: var(--gold-2); color: var(--teal-900); }
+
+/* headings in Rubik — modern geometric Hebrew */
+.display { font-weight: 500; letter-spacing: -0.02em; line-height: 1.1; }
+.display em { font-weight: 300; }
+.h1 { font-size: clamp(2.6rem, 5.6vw, 5.8rem); }
+.brand__mark { font-weight: 500; font-size: 1.1rem; letter-spacing: 0; }
+.brand__text small { letter-spacing: 0.22em; font-size: 0.66rem; }
+.prow__n, .fcard__top .ltr, .svc__t span, .feat__count { font-weight: 400; font-size: 0.95rem; }
+.about__points b, .gscore b { font-weight: 300; }

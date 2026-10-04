@@ -1,3 +1,9 @@
+import '@fontsource/rubik/hebrew-300.css';
+import '@fontsource/rubik/hebrew-400.css';
+import '@fontsource/rubik/hebrew-500.css';
+import '@fontsource/rubik/latin-300.css';
+import '@fontsource/rubik/latin-400.css';
+import '@fontsource/rubik/latin-500.css';
 import './globals.css';
 import { AGENCY, LISTINGS, DEAL, TYPES } from '@/lib/data';
 
@@ -41,7 +47,7 @@ export default function RootLayout({ children }) {
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@300;400;500&family=Assistant:wght@400;500;600;700&family=Cormorant+Garamond:wght@400;500&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700&display=swap" rel="stylesheet" />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       </head>
       <body>
