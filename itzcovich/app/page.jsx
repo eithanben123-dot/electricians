@@ -8,6 +8,8 @@ import Services from '@/components/sections/Services';
 import Areas from '@/components/sections/Areas';
 import About from '@/components/sections/About';
 import Testimonials from '@/components/sections/Testimonials';
+import Journal from '@/components/sections/Journal';
+import Faq from '@/components/sections/Faq';
 import Sell from '@/components/sections/Sell';
 import Contact from '@/components/sections/Contact';
 import Footer from '@/components/sections/Footer';
@@ -26,6 +28,8 @@ export default function Home() {
         <Areas />
         <About />
         <Testimonials />
+        <Journal />
+        <Faq />
         <Sell />
         <Contact />
       </main>

@@ -11,7 +11,7 @@ export default function Footer({ legalBase = '' }) {
             <Brand />
             <p>משרד תיווך נדל״ן ברעננה ובשרון: מכירה, השכרה, נדל״ן מסחרי וניהול נכסים — בליווי אישי של {AGENCY.founder}.</p>
           </div>
-          <nav aria-label="ניווט בתחתית"><h3>ניווט</h3><a href="#properties">נכסים</a><a href="#featured">נכסים נבחרים</a><a href="#about">אודות</a><a href="#testimonials">לקוחות ממליצים</a><a href="#contact">צור קשר</a></nav>
+          <nav aria-label="ניווט בתחתית"><h3>ניווט</h3><a href="#properties">נכסים</a><a href="#featured">נכסים נבחרים</a><a href="#about">אודות</a><a href="#testimonials">לקוחות ממליצים</a><a href="#journal">מגזין</a><a href="#faq">שאלות נפוצות</a><a href="#contact">צור קשר</a></nav>
           <nav aria-label="שירותים"><h3>שירותים</h3>{SERVICES.map((s) => <a key={s.key} href="#services">{s.title}</a>)}</nav>
           <div className="foot__list"><h3>אזורים</h3>{AREAS.map((a) => <a key={a.key} href="#areas">{a.name}</a>)}</div>
         </div>
