@@ -112,7 +112,7 @@ function init() {
         p += vec3(sin(r*91.0+uT), cos(r*53.0+uT*1.3), sin(r*27.0-uT)) * 0.35 * fly;
         vec4 mv = modelViewMatrix * vec4(p, 1.0);
         gl_Position = projectionMatrix * mv;
-        float size = (1.4 + r * 2.2) * (1.0 + 0.6 * fly);
+        float size = (1.6 + r * 2.4) * (1.0 + 0.6 * fly) * (1.0 + 0.5 * (1.0 - t1));
         gl_PointSize = size * uPx * (18.0 / -mv.z);
         vA = (0.45 + 0.55 * r) * clamp(14.0 / -mv.z, 0.25, 1.2);
         vMix = step(0.82, r);
@@ -142,7 +142,10 @@ function init() {
     const w = canvas.clientWidth, h = canvas.clientHeight;
     if (!w || !h) return;
     renderer.setSize(w, h, false);
-    camera.aspect = w / h; camera.updateProjectionMatrix();
+    camera.aspect = w / h;
+    // desktop: frame the subject in the left half — the copy lives on the right (RTL)
+    if (!small) camera.setViewOffset(w, h, w * 0.2, -h * 0.04, w, h); else camera.clearViewOffset();
+    camera.updateProjectionMatrix();
   }
   addEventListener('resize', resize); resize();
 
@@ -157,10 +160,10 @@ function init() {
 
     // high & far over the cloud → low over the parcels → orbit around the building
     const ang = 0.5 + sp * 2.1 + (reduced ? 0 : uniforms.uT.value * 0.04);
-    const dist = THREE.MathUtils.lerp(20, small ? 15 : 12.5, sp);
-    const h = THREE.MathUtils.lerp(9, 2.4, Math.min(1, sp * 1.4));
+    const dist = THREE.MathUtils.lerp(20, small ? 19 : 16, sp);
+    const h = THREE.MathUtils.lerp(9, 3.2, Math.min(1, sp * 1.4));
     pos.set(Math.sin(ang) * dist, h, Math.cos(ang) * dist);
-    look.set(small ? 0 : -1.6 * Math.cos(ang), THREE.MathUtils.lerp(0.5, 0.6, sp), small ? 0 : 1.6 * Math.sin(ang) * 0);
+    look.set(0, THREE.MathUtils.lerp(0.2, small ? 1.6 : 0.9, sp), 0);
     camera.position.copy(pos).add(new THREE.Vector3(mx * 1.6, -my * 1.0, 0));
     camera.lookAt(look);
     renderer.render(scene, camera);
