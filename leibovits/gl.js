@@ -209,11 +209,11 @@ function initCity() {
         const c = [[x - w / 2, zc - d / 2], [x + w / 2, zc - d / 2], [x + w / 2, zc + d / 2], [x - w / 2, zc + d / 2]];
         const dens = budget * (row === 2 ? 0.6 : 1);
         // vertical edges
-        c.forEach(([cx, cz]) => edge([cx, 0, cz], [cx, h, cz], Math.round(h * 5 * dens), 0));
+        c.forEach(([cx, cz]) => edge([cx, 0, cz], [cx, h, cz], Math.round(h * 8 * dens), 0));
         // floor rings (windows lines)
         for (let y = 0; y <= h; y += 1.1) {
-          if (rnd() > 0.55) continue;
-          for (let k = 0; k < 4; k++) { const a = c[k], b = c[(k + 1) % 4]; edge([a[0], y, a[1]], [b[0], y, b[1]], Math.round(4 * dens), rnd() < 0.08 ? 2 : 0); }
+          if (rnd() > 0.7) continue;
+          for (let k = 0; k < 4; k++) { const a = c[k], b = c[(k + 1) % 4]; edge([a[0], y, a[1]], [b[0], y, b[1]], Math.round(6 * dens), rnd() < 0.12 ? 2 : 0); }
         }
         // crown
         for (let k = 0; k < 4; k++) { const a = c[k], b = c[(k + 1) % 4]; edge([a[0], h, a[1]], [b[0], h, b[1]], Math.round(14 * dens), 2); }
