@@ -248,13 +248,13 @@ function initCity() {
         vec4 mv = modelViewMatrix * vec4(p, 1.0);
         gl_Position = projectionMatrix * mv;
         float dist = -mv.z;
-        float fog = clamp(1.0 - dist / 170.0, 0.0, 1.0);
+        float fog = clamp(1.0 - dist / 210.0, 0.0, 1.0);
         float tw = 0.75 + 0.25 * sin(uT * 2.0 + aR * 60.0);
-        float base = aK < 0.5 ? 0.55 : aK < 1.5 ? 0.22 : aK < 2.5 ? 1.0 : 1.2;
-        vA = base * fog * fog * (aK > 1.5 ? tw : 1.0);
+        float base = aK < 0.5 ? 0.95 : aK < 1.5 ? 0.35 : aK < 2.5 ? 1.4 : 1.6;
+        vA = base * fog * (aK > 1.5 ? tw : 1.0);
         vC = aK < 0.5 ? vec3(0.78, 0.60, 0.36) : aK < 1.5 ? vec3(0.55, 0.45, 0.32) : aK < 2.5 ? vec3(1.0, 0.86, 0.6) : (p.x > 0.0 ? vec3(1.0, 0.78, 0.45) : vec3(0.95, 0.92, 0.85));
         float s = aK < 0.5 ? 1.2 : aK < 1.5 ? 1.0 : aK < 2.5 ? 2.2 : 3.0;
-        gl_PointSize = s * uPx * (14.0 / max(dist, 1.0)) * (0.7 + aR * 0.6) + 0.6;
+        gl_PointSize = s * uPx * (42.0 / max(dist, 1.0)) * (0.7 + aR * 0.6) + 1.2;
       }`,
     fragmentShader: /* glsl */`
       varying float vA; varying vec3 vC;

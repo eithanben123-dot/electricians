@@ -270,13 +270,13 @@ button.pill { cursor: pointer; }
 .city { position: fixed; inset: 0; z-index: 0; width: 100%; height: 100%; pointer-events: none; }
 main, .foot { position: relative; z-index: 1; }
 .nav, .menu { z-index: 100; }
-.about { background: linear-gradient(to bottom, rgba(11,10,8,.94), rgba(11,10,8,.55) 40%, rgba(11,10,8,.55) 70%, rgba(11,10,8,.9)); }
+.about { background: linear-gradient(to bottom, rgba(11,10,8,.9), rgba(11,10,8,.35) 30%, rgba(11,10,8,.35) 75%, rgba(11,10,8,.6)); }
 .marquee { background: rgba(11,10,8,.7); backdrop-filter: blur(6px); }
 .services { background: transparent; }
-.services__stage { background: radial-gradient(ellipse at 50% 60%, rgba(11,10,8,.2), rgba(11,10,8,.75) 75%); }
-.manifesto { background: rgba(11,10,8,.5); }
-.process { background: rgba(18,17,14,.66); }
-.faq { background: rgba(11,10,8,.62); }
+.services__stage { background: radial-gradient(ellipse at 50% 60%, rgba(11,10,8,0), rgba(11,10,8,.55) 80%); }
+.manifesto { background: rgba(11,10,8,.15); }
+.process { background: rgba(18,17,14,.4); }
+.faq { background: rgba(11,10,8,.35); }
 .contact { background: linear-gradient(to bottom, rgba(7,6,5,.55), rgba(7,6,5,.95)); }
 .hero { background: transparent; }
 .hero__stage { transform-origin: 50% 100%; will-change: transform; background: var(--ink); }
