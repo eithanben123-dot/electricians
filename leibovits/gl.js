@@ -172,3 +172,124 @@ function init() {
 }
 
 function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+
+/* =====================================================================================
+   The city — a fixed WebGL layer behind the whole page. Hundreds of brass wireframe
+   towers along an avenue; the page scroll flies the camera down the avenue while
+   streams of light (traffic) flow below. Script.js feeds window.__city = { p, on }.
+   ===================================================================================== */
+const cityCanvas = document.getElementById('city');
+if (cityCanvas && hasWebGL()) initCity();
+
+function initCity() {
+  const city = window.__city || { p: 0, on: true };
+  const small = innerWidth < 820;
+  const renderer = new THREE.WebGLRenderer({ canvas: cityCanvas, antialias: false, alpha: false, powerPreference: 'high-performance' });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, small ? 1.25 : 1.6));
+  renderer.setClearColor(0x070605, 1);
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(small ? 70 : 58, 1, 0.1, 400);
+  const rnd = mulberry32(21);
+
+  const LEN = 300, AVE = 7;                      // avenue length (z) and half-width
+  const pts = [], rs = [], kind = [];
+  const push = (x, y, z, k) => { pts.push(x, y, z); rs.push(rnd()); kind.push(k); };
+  const edge = (a, b, n, k) => { for (let i = 0; i < n; i++) { const t = rnd(); push(a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t, k); } };
+  const budget = small ? 0.45 : 1;
+
+  // towers on both sides of the avenue, several rows deep
+  for (let z = 10; z > -LEN; z -= 7 + rnd() * 5) {
+    for (const side of [-1, 1]) {
+      for (let row = 0; row < 3; row++) {
+        if (rnd() < 0.18) continue;
+        const w = 2.4 + rnd() * 3, d = 2.4 + rnd() * 3;
+        const h = (row === 0 ? 6 : 10) + Math.pow(rnd(), 2) * (row === 2 ? 46 : 30);
+        const x = side * (AVE + 2 + row * 8 + rnd() * 3);
+        const zc = z + (rnd() - 0.5) * 3;
+        const c = [[x - w / 2, zc - d / 2], [x + w / 2, zc - d / 2], [x + w / 2, zc + d / 2], [x - w / 2, zc + d / 2]];
+        const dens = budget * (row === 2 ? 0.6 : 1);
+        // vertical edges
+        c.forEach(([cx, cz]) => edge([cx, 0, cz], [cx, h, cz], Math.round(h * 5 * dens), 0));
+        // floor rings (windows lines)
+        for (let y = 0; y <= h; y += 1.1) {
+          if (rnd() > 0.55) continue;
+          for (let k = 0; k < 4; k++) { const a = c[k], b = c[(k + 1) % 4]; edge([a[0], y, a[1]], [b[0], y, b[1]], Math.round(4 * dens), rnd() < 0.08 ? 2 : 0); }
+        }
+        // crown
+        for (let k = 0; k < 4; k++) { const a = c[k], b = c[(k + 1) % 4]; edge([a[0], h, a[1]], [b[0], h, b[1]], Math.round(14 * dens), 2); }
+      }
+    }
+  }
+  // ground grid
+  for (let z = 10; z > -LEN; z -= 4) edge([-60, 0, z], [60, 0, z], Math.round(40 * budget), 1);
+  for (let x = -60; x <= 60; x += 6) edge([x, 0, 10], [x, 0, -LEN], Math.round(120 * budget), 1);
+  // traffic: light streams along the avenue (animated in the shader)
+  const TRAFFIC = small ? 900 : 2400;
+  for (let i = 0; i < TRAFFIC; i++) push((rnd() < 0.5 ? -1 : 1) * (1 + rnd() * (AVE - 2)), 0.15, -rnd() * LEN, 3);
+
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(pts, 3));
+  geo.setAttribute('aR', new THREE.Float32BufferAttribute(rs, 1));
+  geo.setAttribute('aK', new THREE.Float32BufferAttribute(kind, 1));
+
+  const uniforms = { uT: { value: 0 }, uPx: { value: renderer.getPixelRatio() }, uLen: { value: LEN }, uCamZ: { value: 0 } };
+  const mat = new THREE.ShaderMaterial({
+    uniforms, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+    vertexShader: /* glsl */`
+      attribute float aR; attribute float aK;
+      uniform float uT; uniform float uPx; uniform float uLen; uniform float uCamZ;
+      varying float vA; varying vec3 vC;
+      void main(){
+        vec3 p = position;
+        if (aK > 2.5) {                               // traffic: flows, wraps around the camera
+          float dir = p.x > 0.0 ? 1.0 : -1.0;
+          p.z = mod(p.z + dir * uT * (6.0 + aR * 10.0) - uCamZ + 20.0, uLen) + uCamZ - uLen + 20.0;
+        }
+        vec4 mv = modelViewMatrix * vec4(p, 1.0);
+        gl_Position = projectionMatrix * mv;
+        float dist = -mv.z;
+        float fog = clamp(1.0 - dist / 170.0, 0.0, 1.0);
+        float tw = 0.75 + 0.25 * sin(uT * 2.0 + aR * 60.0);
+        float base = aK < 0.5 ? 0.55 : aK < 1.5 ? 0.22 : aK < 2.5 ? 1.0 : 1.2;
+        vA = base * fog * fog * (aK > 1.5 ? tw : 1.0);
+        vC = aK < 0.5 ? vec3(0.78, 0.60, 0.36) : aK < 1.5 ? vec3(0.55, 0.45, 0.32) : aK < 2.5 ? vec3(1.0, 0.86, 0.6) : (p.x > 0.0 ? vec3(1.0, 0.78, 0.45) : vec3(0.95, 0.92, 0.85));
+        float s = aK < 0.5 ? 1.2 : aK < 1.5 ? 1.0 : aK < 2.5 ? 2.2 : 3.0;
+        gl_PointSize = s * uPx * (14.0 / max(dist, 1.0)) * (0.7 + aR * 0.6) + 0.6;
+      }`,
+    fragmentShader: /* glsl */`
+      varying float vA; varying vec3 vC;
+      void main(){
+        float d = length(gl_PointCoord - 0.5); if (d > 0.5) discard;
+        float a = smoothstep(0.5, 0.0, d) * vA;
+        gl_FragColor = vec4(vC * a, a);
+      }`,
+  });
+  const cloud = new THREE.Points(geo, mat);
+  cloud.frustumCulled = false;
+  scene.add(cloud);
+
+  let mx = 0, my = 0, sp = 0;
+  addEventListener('pointermove', (e) => { mx = e.clientX / innerWidth - 0.5; my = e.clientY / innerHeight - 0.5; }, { passive: true });
+  function resize() { renderer.setSize(innerWidth, innerHeight, false); camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); }
+  addEventListener('resize', resize); resize();
+
+  const look = new THREE.Vector3(), clock = new THREE.Clock();
+  (function frame() {
+    requestAnimationFrame(frame);
+    const dt = Math.min(clock.getDelta(), 0.05);
+    if (!city.on) return;
+    sp += (city.p - sp) * (reduced ? 1 : 1 - Math.exp(-dt * 3));
+    if (!reduced) uniforms.uT.value += dt;
+    // fly down the avenue: low between the towers, rising for a final aerial view
+    const z = 14 - sp * (LEN - 70);
+    const rise = Math.pow(Math.max(0, sp - 0.72) / 0.28, 2);
+    const y = 4.5 + Math.sin(sp * Math.PI * 3) * 1.5 + rise * 38;
+    const x = Math.sin(sp * Math.PI * 2.2) * 2.6;
+    camera.position.set(x + mx * 1.8, y - my * 1.2, z);
+    look.set(Math.sin(sp * Math.PI * 2.2 + 0.6) * 4, y * (1 - rise * 0.75) + 1.5 - rise * 8, z - 30);
+    camera.lookAt(look);
+    camera.rotateZ(Math.sin(sp * Math.PI * 4) * 0.05);   // gentle banking
+    uniforms.uCamZ.value = z;
+    renderer.render(scene, camera);
+  })();
+}

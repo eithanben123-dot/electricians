@@ -95,7 +95,7 @@
   });
 
   /* ---------------------------------------------------------------- hero: scroll-scrubbed film */
-  var hero = $('.hero'), video = $('#heroVideo'), heroBar = $('#heroBar'), heroTc = $('#heroTc');
+  var hero = $('.hero'), stage = $('.hero__stage'), video = $('#heroVideo'), heroBar = $('#heroBar'), heroTc = $('#heroTc');
   var beats = $$('.beat');
   var target = 0, shown = 0, dur = 0, vRaf = 0;
   if (video) {
@@ -128,13 +128,14 @@
   function pad2(n) { return (n < 10 ? '0' : '') + n; }
 
   /* ---------------------------------------------------------------- services: horizontal rail */
-  var services = $('.services'), rail = $('#rail'), railBar = $('#railBar'), railMax = 0;
+  var services = $('.services'), rail = $('#rail'), railBar = $('#railBar'), railMax = 0, ringR = 400, cards = $$('.svc');
   function layout() {
     small = matchMedia('(max-width: 820px)').matches;
     if (!small && rail) {
-      railMax = Math.max(0, rail.scrollWidth - innerWidth);
-      services.style.height = (railMax + VH * 1.15) + 'px';
-    } else if (services) services.style.height = '';
+      services.style.height = (VH * 4.4) + 'px';
+      ringR = rail.offsetWidth * 1.05;
+      cards.forEach(function (c, i) { c.style.transform = 'rotateY(' + (i * 360 / cards.length) + 'deg) translateZ(' + ringR + 'px)'; });
+    } else if (services) { services.style.height = ''; cards.forEach(function (c) { c.style.transform = ''; }); }
   }
   layout();
   addEventListener('load', layout);
@@ -150,12 +151,28 @@
       var half = mq.scrollWidth / 2;
       mqX += 0.6 + Math.min(Math.abs(vel) * 0.35, 18);
       if (mqX > half) mqX -= half;
-      mq.style.transform = 'translate3d(' + mqX + 'px,0,0)';
+      mq.style.transform = 'translate3d(' + mqX + 'px,0,0) skewX(' + clamp(-vel * 0.35, -22, 22).toFixed(2) + 'deg)';
     }
     vel *= 0.9;
     requestAnimationFrame(mqTick);
   }
   if (!reduced) requestAnimationFrame(mqTick);
+
+  /* ---------------------------------------------------------------- 3D depth targets */
+  var depth = [];
+  function add3d(sel, rx, ry, z) { $$(sel).forEach(function (el, i) { el.setAttribute('data-3d', ''); depth.push({ el: el, rx: rx, ry: typeof ry === 'function' ? ry(i) : ry, z: z }); }); }
+  add3d('.about__text', 22, -10, 160);
+  add3d('.portrait__img', 18, 22, 200);
+  add3d('.services__head', 26, 0, 120);
+  add3d('.vision__in', 20, -14, 160);
+  add3d('.manifesto__q', 34, 0, 220);
+  add3d('.process__head', 18, 10, 120);
+  add3d('.step', 30, function (i) { return i % 2 ? 26 : -26; }, 180);
+  add3d('.faq__list details', 24, function (i) { return i % 2 ? 10 : -10; }, 120);
+  add3d('.contact__l', 20, -12, 140);
+  add3d('.form', 20, 14, 140);
+  var footWord = $('.foot__word');
+  window.__city = { p: 0, on: false };
 
   /* ---------------------------------------------------------------- main scroll handler */
   var visionImg = $('.vision__img'), fab = $('.fab'), lastDir = 0;
@@ -176,6 +193,10 @@
       hero.style.setProperty('--bar', (9 * clamp(1 - p * 1.6, 0, 1)) + 'vh');
       if (!reduced) video.style.transform = 'scale(' + (1.04 + p * 0.16).toFixed(4) + ')';
       heroBar.style.transform = 'scaleX(' + p + ')';
+      var k = clamp((p - 0.86) / 0.14, 0, 1), ek = k * k;
+      stage.style.transform = k > 0 ? 'perspective(1600px) rotateX(' + (ek * 16).toFixed(2) + 'deg) scale(' + (1 - ek * 0.16).toFixed(4) + ')' : '';
+      stage.style.opacity = String(1 - ek * 0.55);
+      hero.classList.toggle('is-leaving', k > 0);
       var secs = Math.round(p * (dur || 8));
       heroTc.textContent = '00:' + pad2(secs);
       beats.forEach(function (b) {
@@ -194,10 +215,33 @@
 
     // services rail (RTL: content overflows to the left → translate right)
     if (services && !small && rail) {
-      var sp = progressOf(services);
-      rail.style.transform = 'translate3d(' + (sp * railMax) + 'px,0,0)';
+      var sp = progressOf(services), step = 360 / cards.length;
+      var rot = -sp * step * (cards.length - 1) * 1.04;
+      rail.style.transform = 'translateZ(' + (-ringR) + 'px) rotateX(' + (-4 + sp * 8).toFixed(2) + 'deg) rotateY(' + rot.toFixed(2) + 'deg)';
       railBar.style.transform = 'scaleX(' + sp + ')';
+      cards.forEach(function (c, i) {
+        var a = ((i * step + rot) % 360 + 540) % 360 - 180;       // -180..180, 0 = facing us
+        var f = Math.cos(a * Math.PI / 180);
+        c.style.opacity = String(clamp(0.15 + f * 0.85, 0.08, 1));
+        c.style.filter = 'brightness(' + (0.45 + 0.55 * Math.max(f, 0)).toFixed(2) + ')';
+        c.classList.toggle('is-front', Math.abs(a) < step / 2);
+      });
     }
+
+    // continuous perspective: blocks tilt in from below, flatten at centre, tilt away above
+    if (!reduced) for (var d = 0; d < depth.length; d++) {
+      var o = depth[d], r3 = o.el.getBoundingClientRect();
+      if (r3.bottom < -100 || r3.top > VH + 100) continue;
+      var c = clamp((r3.top + r3.height / 2 - VH / 2) / VH, -1.2, 1.2);
+      o.el.style.transform = 'perspective(1300px) translateZ(' + (-Math.abs(c) * o.z).toFixed(1) + 'px) rotateX(' + (-c * o.rx).toFixed(2) + 'deg) rotateY(' + (c * o.ry).toFixed(2) + 'deg)';
+    }
+    if (footWord && !reduced) {
+      var fr = footWord.getBoundingClientRect();
+      var fk = clamp((VH - fr.top) / (fr.height + VH * 0.4), 0, 1);
+      footWord.style.transform = 'rotateX(' + ((1 - fk) * 70).toFixed(1) + 'deg) translateY(' + ((1 - fk) * 30).toFixed(1) + 'px)';
+    }
+    window.__city.p = clamp(y / Math.max(1, document.documentElement.scrollHeight - VH), 0, 1);
+    window.__city.on = small ? y > VH * 0.6 : y > heroEnd - VH * 0.25;
 
     // statements lit word by word
     wordBlocks.forEach(function (b) {
