@@ -276,7 +276,7 @@ button.pill { cursor: pointer; }
   .hero { height: auto; }
   .hero__stage { height: 100svh; }
   .beat { bottom: 120px; }
-  .beat:not(:first-of-type) { display: none; }
+  .beat:not(.beat--first) { display: none; }
   .bars, .hud { display: none; }
   .cue { top: auto; bottom: 34px; }
   .method { height: 260vh; }
